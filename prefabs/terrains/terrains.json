@@ -1,0 +1,23 @@
+{
+	"0":{
+		"type": "grass",
+		"terrains":[
+			"grass_00",
+			"grass_01",
+		]
+	},
+	"1":{
+		"type": "forest",
+		"terrains":[
+			"forest_00",
+			"forest_01",
+			"forest_02",
+		]
+	},
+	"2":{
+		"type": "water",
+		"terrains":[
+			"water_00"
+		]
+	}
+}

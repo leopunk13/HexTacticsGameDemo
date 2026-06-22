@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bhqm2lawpmrcv"]
+
+[ext_resource type="Texture2D" uid="uid://cedbg617ddc06" path="res://assets/tiles/WWT-02.png" id="1_2n2sr"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i45ps"]
+texture = ExtResource("1_2n2sr")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_durro"]
+tile_shape = 3
+tile_size = Vector2i(95, 110)
+sources/0 = SubResource("TileSetAtlasSource_i45ps")
+
+[node name="grass01" type="TileMapLayer" unique_id=377310247]
+tile_map_data = PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 96)
+tile_set = SubResource("TileSet_durro")

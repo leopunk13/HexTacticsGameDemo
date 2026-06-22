@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://44tt2sayusy"]
+
+[ext_resource type="Texture2D" uid="uid://wqigqjsj3avp" path="res://assets/tiles/WWT-08.png" id="1_yul4x"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_akpxl"]
+texture = ExtResource("1_yul4x")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_x8uq8"]
+tile_shape = 3
+tile_size = Vector2i(95, 110)
+sources/0 = SubResource("TileSetAtlasSource_akpxl")
+
+[node name="forest01" type="TileMapLayer" unique_id=1008454633]
+tile_map_data = PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 96)
+tile_set = SubResource("TileSet_x8uq8")

@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dirv44s3ui3b3"
+
+[deps]
+
+files=["res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation"]
+
+source_file="res://scenes/maps/map01 - 副本.csv"
+dest_files=["res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation", "res://scenes/maps/map01 - 副本.0.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
