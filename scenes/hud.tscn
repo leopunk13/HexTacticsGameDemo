@@ -1,0 +1,163 @@
+[gd_scene format=3 uid="uid://pnxljbml3cpd"]
+
+[ext_resource type="Script" uid="uid://drxxs5yn3bqxq" path="res://scripts/hud.gd" id="1"]
+
+[node name="HUD" type="CanvasLayer" unique_id=1631618493]
+layer = 10
+script = ExtResource("1")
+
+[node name="BottomPanel" type="Panel" parent="." unique_id=970892337]
+offset_left = 290.0
+offset_top = 620.0
+offset_right = 990.0
+offset_bottom = 715.0
+
+[node name="SkillBar" type="HBoxContainer" parent="BottomPanel" unique_id=445741650]
+layout_mode = 0
+offset_left = 370.0
+offset_top = 8.0
+offset_right = 690.0
+offset_bottom = 88.0
+
+[node name="Skill1" type="Panel" parent="BottomPanel/SkillBar" unique_id=180935967]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+
+[node name="KeyLabel" type="Label" parent="BottomPanel/SkillBar/Skill1" unique_id=1204246198]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 20.0
+offset_bottom = 18.0
+text = "1"
+
+[node name="NameLabel" type="Label" parent="BottomPanel/SkillBar/Skill1" unique_id=1119923963]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 55.0
+offset_bottom = 56.0
+text = "旋风斩"
+horizontal_alignment = 1
+
+[node name="CooldownOverlay" type="ColorRect" parent="BottomPanel/SkillBar/Skill1" unique_id=1267895481]
+visible = false
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="Skill2" type="Panel" parent="BottomPanel/SkillBar" unique_id=1850850656]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+
+[node name="KeyLabel" type="Label" parent="BottomPanel/SkillBar/Skill2" unique_id=131141317]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 20.0
+offset_bottom = 18.0
+text = "2"
+
+[node name="NameLabel" type="Label" parent="BottomPanel/SkillBar/Skill2" unique_id=669881123]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 55.0
+offset_bottom = 56.0
+text = "火球术"
+horizontal_alignment = 1
+
+[node name="CooldownOverlay" type="ColorRect" parent="BottomPanel/SkillBar/Skill2" unique_id=2125687830]
+visible = false
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="Skill3" type="Panel" parent="BottomPanel/SkillBar" unique_id=1917506384]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+
+[node name="KeyLabel" type="Label" parent="BottomPanel/SkillBar/Skill3" unique_id=528365073]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 20.0
+offset_bottom = 18.0
+text = "3"
+
+[node name="NameLabel" type="Label" parent="BottomPanel/SkillBar/Skill3" unique_id=1395725473]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 55.0
+offset_bottom = 56.0
+text = "地裂击"
+horizontal_alignment = 1
+
+[node name="CooldownOverlay" type="ColorRect" parent="BottomPanel/SkillBar/Skill3" unique_id=122426779]
+visible = false
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="Skill4" type="Panel" parent="BottomPanel/SkillBar" unique_id=437771498]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+
+[node name="KeyLabel" type="Label" parent="BottomPanel/SkillBar/Skill4" unique_id=1621514749]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 20.0
+offset_bottom = 18.0
+text = "4"
+
+[node name="NameLabel" type="Label" parent="BottomPanel/SkillBar/Skill4" unique_id=1582345521]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 55.0
+offset_bottom = 56.0
+text = "暗影冲"
+horizontal_alignment = 1
+
+[node name="CooldownOverlay" type="ColorRect" parent="BottomPanel/SkillBar/Skill4" unique_id=1057827694]
+visible = false
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 60.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="PotionSlot" type="Panel" parent="BottomPanel/SkillBar" unique_id=1712910794]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+
+[node name="KeyLabel" type="Label" parent="BottomPanel/SkillBar/PotionSlot" unique_id=1691261050]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 20.0
+offset_bottom = 18.0
+text = "Q"
+
+[node name="NameLabel" type="Label" parent="BottomPanel/SkillBar/PotionSlot" unique_id=1893143077]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 55.0
+offset_bottom = 56.0
+text = "药水"
+horizontal_alignment = 1
+
+[node name="Controls" type="RichTextLabel" parent="." unique_id=428361968]
+offset_left = 10.0
+offset_top = 630.0
+offset_right = 280.0
+offset_bottom = 715.0
+bbcode_enabled = true
+text = "[b]操作说明[/b]
+WASD - 移动 | 鼠标左键 - 攻击
+1-4 - 技能 | Q - 药水"

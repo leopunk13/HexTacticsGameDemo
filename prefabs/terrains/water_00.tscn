@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://brr752gx2rxc6"]
+
+[ext_resource type="Texture2D" uid="uid://nqj5fdvt56ad" path="res://assets/tiles/WWT-26.png" id="1_spywu"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_durro"]
+texture = ExtResource("1_spywu")
+texture_region_size = Vector2i(128, 128)
+use_texture_padding = false
+0:0/0 = 0
+0:0/0/terrain = 0
+
+[sub_resource type="TileSet" id="TileSet_i5k1u"]
+tile_shape = 3
+tile_size = Vector2i(95, 110)
+sources/0 = SubResource("TileSetAtlasSource_durro")
+
+[node name="water00" type="TileMapLayer" unique_id=1382777261]
+tile_map_data = PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 96)
+tile_set = SubResource("TileSet_i5k1u")

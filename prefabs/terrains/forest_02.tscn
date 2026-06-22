@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://d1majqg8u88f1"]
+
+[ext_resource type="Texture2D" uid="uid://1iq2swd8y0kw" path="res://assets/tiles/WWT-17.png" id="1_xggg4"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i5k1u"]
+texture = ExtResource("1_xggg4")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_thtoo"]
+tile_shape = 3
+tile_size = Vector2i(95, 110)
+sources/1 = SubResource("TileSetAtlasSource_i5k1u")
+
+[node name="forest02" type="TileMapLayer" unique_id=2072043215]
+tile_map_data = PackedByteArray(0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 96)
+tile_set = SubResource("TileSet_thtoo")
