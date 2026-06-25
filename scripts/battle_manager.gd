@@ -13,6 +13,7 @@ enum BattleState {
 	SELECT_UNIT,     ## 选择单位
 	SELECT_MOVE,     ## 选择移动目标
 	SELECT_ATTACK,   ## 选择攻击目标
+	SELECT_FACING,   ## 选择朝向（移动后）
 	UNIT_MOVING,     ## 单位移动中
 	ENEMY_TURN,      ## 敌方回合
 	BATTLE_OVER,     ## 战斗结束
@@ -38,6 +39,11 @@ signal message_shown(text: String)
 ## 所有单位
 var player_units: Array[Unit] = []
 var enemy_units: Array[Unit] = []
+
+## 调试用：记录本次移动点击地块的中心坐标
+var _debug_move_tile_center: Vector2 = Vector2.ZERO
+## 调试用：记录本次移动点击地块的轴向坐标
+var _debug_move_axial: Vector2i = Vector2i.ZERO
 
 ## 初始化战斗
 func setup_battle(cam: CameraController, hud_node: CanvasLayer) -> void:
@@ -231,6 +237,9 @@ func _handle_select_move(tile: HexTile) -> void:
 
 			selected_unit.move_along_path(path)
 			_set_state(BattleState.UNIT_MOVING)
+			# 记录点击地块中心坐标，供移动完成后对比
+			_debug_move_tile_center = HexUtils.axial_to_pixel(clicked_coord.x, clicked_coord.y)
+			_debug_move_axial = clicked_coord
 			# 避免重复连接信号（单位多次移动时会重复调用connect）
 			if not selected_unit.unit_moved.is_connected(_on_unit_unit_moved):
 				selected_unit.unit_moved.connect(_on_unit_unit_moved)
@@ -303,7 +312,9 @@ func _set_state(new_state: int) -> void:
 	state = new_state
 	state_changed.emit(new_state)
 	#HexGrids.clear_highlights()
-	selected_unit = null
+	# SELECT_FACING 状态需要保留 selected_unit（在调用处已设置）
+	if state != BattleState.SELECT_FACING:
+		selected_unit = null
 	reachable_tiles.clear()
 	attackable_coords.clear()
 
@@ -315,6 +326,10 @@ func _set_state(new_state: int) -> void:
 			pass
 		BattleState.SELECT_ATTACK:
 			pass
+		BattleState.SELECT_FACING:
+			# 显示朝向选择高亮（6个相邻方向）
+			if selected_unit != null:
+				_show_facing_options(selected_unit)
 
 
 ## 点击地块
@@ -326,6 +341,8 @@ func _on_hex_tile_tile_clicked(tile: HexTile) -> void:
 			_handle_select_move(tile)
 		BattleState.SELECT_ATTACK:
 			_handle_select_attack(tile)
+		BattleState.SELECT_FACING:
+			_handle_select_facing(tile)
 
 ## 单位行动完成回调
 func _on_unit_action_finished(unit: Unit) -> void:
@@ -334,11 +351,47 @@ func _on_unit_action_finished(unit: Unit) -> void:
 ## 单位移动完成回调
 func _on_unit_unit_moved(unit: Unit) -> void:
 	if state == BattleState.UNIT_MOVING:
-		# 移动完成后检查是否可以攻击
-		if not unit.has_attacked:
-			_show_remaining_actions(unit)
-		else:
-			_set_state(BattleState.SELECT_UNIT)
+		# 打印点击地块中心坐标与移动后精灵中心坐标用于对比调试
+		var sprite_center: Vector2 = unit.global_position
+		DebugLog.debug_nospam("position_debug", "axial=%s 点击地块中心=%s 移动后精灵中心=%s 偏差=%s" % [str(_debug_move_axial), str(_debug_move_tile_center), str(sprite_center), str(sprite_center - _debug_move_tile_center)])
+		# 移动完成后进入朝向选择状态
+		# 先设置 selected_unit，再 _set_state 会触发 _show_facing_options
+		selected_unit = unit
+		_set_state(BattleState.SELECT_FACING)
+
+## 显示朝向选择高亮（6个相邻方向）
+func _show_facing_options(unit: Unit) -> void:
+	HexGrids.clear_highlights()
+	# 高亮当前单位所在地块
+	var current_tile: HexTile = HexGrids.get_tile(unit.grid_coord)
+	if current_tile:
+		current_tile.highlight_type = HexTile.HighlightType.SELECTED
+	# 高亮6个相邻方向供玩家点击选择朝向
+	for dir in HexUtils.HEX_DIRECTIONS:
+		var neighbor_coord: Vector2i = unit.grid_coord + dir
+		var t: HexTile = HexGrids.get_tile(neighbor_coord)
+		if t:
+			t.highlight_type = HexTile.HighlightType.MOVE
+
+## 处理选择朝向
+func _handle_select_facing(tile: HexTile) -> void:
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var clicked_coord: Vector2i = HexUtils.pixel_to_axial(mouse_pos.x, mouse_pos.y)
+	DebugLog.debug_nospam("func_call","_handle_select_facing")
+	if selected_unit == null:
+		_set_state(BattleState.SELECT_UNIT)
+		return
+
+	# 点击自身地块：保持当前朝向，跳过朝向选择
+	if clicked_coord == selected_unit.grid_coord:
+		_show_remaining_actions(selected_unit)
+		return
+
+	# 点击相邻地块：设置朝向并继续
+	var diff: Vector2i = clicked_coord - selected_unit.grid_coord
+	if diff in HexUtils.HEX_DIRECTIONS:
+		selected_unit.set_facing_from_coord(diff)
+	_show_remaining_actions(selected_unit)
 
 ## 单位死亡回调
 func _on_unit_unit_died(unit: Unit) -> void:

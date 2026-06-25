@@ -49,6 +49,12 @@ static var debug_dict: Dictionary = {
 		"color": "orange",
 		"type": "concat1"
 		},
+	"position_debug": {
+		"tmp": null, "old": null,
+		"message": "[ --- Position--- ] ", 
+		"color": "cyan",
+		"type": "concat1"
+		},
 }
 
 ## Enables or disables debug logging.

@@ -2,3 +2,4 @@ res://scripts/unit.gd
 res://scenes/main.tscn
 res://scripts/battle_manager.gd
 res://scenes/game_world.tscn
+res://scripts/debug_log.gd
