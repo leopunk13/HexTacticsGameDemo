@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://pnxljbml3cpd"]
 
 [ext_resource type="Script" uid="uid://drxxs5yn3bqxq" path="res://scripts/hud.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bmpdhkd7v2tmm" path="res://scenes/game_menu.tscn" id="2_oo0fn"]
 
 [node name="HUD" type="CanvasLayer" unique_id=1631618493]
 layer = 10
@@ -161,3 +162,5 @@ bbcode_enabled = true
 text = "[b]操作说明[/b]
 WASD - 移动 | 鼠标左键 - 攻击
 1-4 - 技能 | Q - 药水"
+
+[node name="GameMenu" parent="." unique_id=2004912699 instance=ExtResource("2_oo0fn")]

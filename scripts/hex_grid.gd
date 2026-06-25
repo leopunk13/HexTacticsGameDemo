@@ -136,11 +136,11 @@ func get_reachable_tiles(start: Vector2i, move_range: int) -> Dictionary:
 func get_attackable_tiles(start: Vector2i, attack_range: int, friendly_team: int) -> Array[Vector2i]:
 	var attackable: Array[Vector2i] = []
 	for coord in tiles:
-		if HexUtils.hex_distance(start, coord) == attack_range and coord != start:
+		if HexUtils.hex_distance(start, coord) <= attack_range and coord != start:
 			var tile: HexTile = tiles[coord]
-			if tile == null or not tile.is_passable():
+			if tile == null:
 				continue
-			if (tile.is_occupied() and tile.occupying_unit.team != friendly_team) or tile.is_passable():
+			if tile.is_occupied() and tile.occupying_unit.team != friendly_team:
 				attackable.append(coord)
 	return attackable
 

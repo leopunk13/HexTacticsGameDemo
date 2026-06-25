@@ -7,6 +7,17 @@ signal mana_changed(current: float, maximum: float)
 signal player_died
 signal level_up(new_level: int)
 signal skill_used(slot: int)
+signal action_finished(unit: Unit)
+signal unit_moved(unit: Unit)
+signal unit_attacked(unit: Unit, target: Unit)
+signal unit_died(unit: Unit)
+
+
+# 引用
+# 注意：Player 场景将 Unit 作为子节点实例化，因此 @onready 需要在子节点中查找
+@onready var attack_area: Area2D = get_node_or_null("AttackArea")
+@onready var attack_collision: CollisionShape2D = get_node_or_null("AttackArea/AttackCollision")
+@onready var camera: Camera2D = get_node_or_null("Camera2D")
 
 ## 队伍枚举
 enum Team { PLAYER, ENEMY }
@@ -14,6 +25,8 @@ enum Team { PLAYER, ENEMY }
 signal tile_clicked(tile: HexTile)
 
 # 属性
+## 单位名称
+@export var unit_name: String = ""
 @export var max_health: float = 100.0
 @export var max_mana: float = 50.0
 @export var move_speed: float = 200.0
@@ -21,6 +34,7 @@ signal tile_clicked(tile: HexTile)
 @export var attack_damage: float = 25.0
 @export var attack_range: float = 6.0
 @export var attack_cooldown: float = 0.5
+@export var armor_class: float = 20.0
 ## 所属队伍
 @export var team: Team = Team.PLAYER
 
@@ -32,6 +46,12 @@ var facing_direction: Vector2 = Vector2.DOWN
 
 ## 本回合是否已移动
 var has_moved: bool = false
+## 移动动画相关
+var _is_moving: bool = false
+var _move_path: Array[Vector2i] = []
+var _move_index: int = 0
+var _move_speed: float = 200.0
+
 ## 本回合是否已攻击
 var has_attacked: bool = false
 
@@ -47,21 +67,38 @@ var skill_cooldowns: Dictionary = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
 var skill_max_cooldowns: Dictionary = {1: 3.0, 2: 5.0, 3: 8.0, 4: 12.0}
 var skill_mana_costs: Dictionary = {1: 10.0, 2: 15.0, 3: 20.0, 4: 25.0}
 
-# 引用
-@onready var attack_area: Area2D = $AttackArea
-@onready var attack_collision: CollisionShape2D = $AttackArea/AttackCollision
-@onready var camera: Camera2D = $Camera2D
-
 var utils: Node  # Utils单例引用
 
 
 func _ready() -> void:
 	health = max_health
 	mana = max_mana
-	attack_collision.disabled = true
-	add_to_group("player")
+	if attack_collision:
+		attack_collision.disabled = true
+	# 根据队伍添加到对应分组
+	if team == Team.PLAYER:
+		add_to_group("player")
+	elif team == Team.ENEMY:
+		add_to_group("enemy")
 	# 获取工具单例
 	utils = get_node_or_null("/root/Utils")
+	
+## 设置单位属性
+func setup(data: Dictionary) -> void:
+	unit_name = data.get("name", unit_name)
+	team = data.get("team", team)
+	max_health = data.get("max_hp", max_health)
+	health = max_health
+	attack_damage = data.get("attack", attack_damage)
+	armor_class = data.get("defense", armor_class)
+	move_range = data.get("move_range", move_range)
+	attack_range = data.get("attack_range", attack_range)
+	grid_coord = data.get("coord", Vector2i.ZERO)
+	#_update_visual()
+	#var unit: Unit = Unit.new()
+	#unit.unit_died.connect(_on_unit_died.bind(unit))
+	#unit.unit_moved.connect(_on_unity)
+	#unit.action_finished.connect(_on_action_finished)
 
 
 func _physics_process(delta: float) -> void:
@@ -86,17 +123,39 @@ func _update_timers(delta: float) -> void:
 
 
 func _handle_movement() -> void:
-	pass
-	#var input_dir := Vector2.ZERO
-	#input_dir.x = Input.get_axis("move_left", "move_right")
-	#input_dir.y = Input.get_axis("move_up", "move_down")
-#
-	#if input_dir != Vector2.ZERO:
-		#input_dir = input_dir.normalized()
-		#facing_direction = input_dir
-#
-	#velocity = input_dir * move_speed
-	#move_and_slide()
+	if not _is_moving:
+		return
+
+	# 视觉表现（AnimatedSprite2D）挂在父节点 Player 上，
+	# 因此需要移动父节点 Player 而非 Unit 自身，使精灵与逻辑节点一起移动
+	var move_node: Node2D = get_parent() if get_parent() is Node2D else self
+
+	# 沿路径逐点移动
+	if _move_index >= _move_path.size():
+		# 路径走完，结束移动
+		_is_moving = false
+		_move_path.clear()
+		_move_index = 0
+		has_moved = true
+		unit_moved.emit(self)
+		return
+
+	# 当前目标点的像素坐标（世界坐标）
+	var target_coord: Vector2i = _move_path[_move_index]
+	var target_pos: Vector2 = HexUtils.axial_to_pixel(target_coord.x, target_coord.y)
+	target_pos.y -= 10
+	# 朝目标移动（使用 global_position 确保世界坐标一致）
+	var direction: Vector2 = (target_pos - move_node.global_position).normalized()
+	var step: float = _move_speed * get_physics_process_delta_time()
+
+	if move_node.global_position.distance_to(target_pos) <= step:
+		# 到达当前路径点
+		move_node.global_position = target_pos
+		grid_coord = target_coord
+		_move_index += 1
+		# 若已走完所有路径点，下一帧会进入上面的完成分支
+	else:
+		move_node.global_position += direction * step
 
 
 func _handle_input() -> void:
@@ -112,7 +171,8 @@ func _handle_input() -> void:
 
 
 func _update_attack_area_position() -> void:
-	attack_collision.position = facing_direction * attack_range
+	if attack_collision:
+		attack_collision.position = facing_direction * attack_range
 
 
 func _regen_mana(delta: float) -> void:
@@ -125,7 +185,8 @@ func _regen_mana(delta: float) -> void:
 func perform_attack() -> void:
 	is_attacking = true
 	attack_timer = attack_cooldown
-	attack_collision.disabled = false
+	if attack_collision:
+		attack_collision.disabled = false
 
 	# 攻击特效
 	if utils:
@@ -133,14 +194,16 @@ func perform_attack() -> void:
 
 	# 检测命中
 	await get_tree().create_timer(0.05).timeout
-	var bodies := attack_area.get_overlapping_bodies()
-	for body in bodies:
-		if body.is_in_group("enemy") and body.has_method("take_damage"):
-			body.take_damage(attack_damage, global_position)
+	if attack_area:
+		var bodies := attack_area.get_overlapping_bodies()
+		for body in bodies:
+			if body.is_in_group("enemy") and body.has_method("take_damage"):
+				body.take_damage(attack_damage, global_position)
 
 	await get_tree().create_timer(0.15).timeout
 	is_attacking = false
-	attack_collision.disabled = true
+	if attack_collision:
+		attack_collision.disabled = true
 
 
 # ==================== 受伤与死亡 ====================
@@ -390,7 +453,14 @@ func heal(amount: float) -> void:
 func can_act() -> bool:
 	return not is_dead and (not has_moved or not has_attacked)
 	
-
+## 移动到目标位置（沿路径）
+func move_along_path(path: Array[Vector2i]) -> void:
+	if path.is_empty() or has_moved or is_dead:
+		action_finished.emit(self)
+		return
+	_move_path = path
+	_move_index = 0
+	_is_moving = true
 
 
 func _on_hex_tile_tile_clicked(tile: HexTile) -> void:

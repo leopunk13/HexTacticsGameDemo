@@ -83,6 +83,10 @@ health_potion={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://assets/languages/localization.en.translation", "res://assets/languages/localization.es.translation", "res://assets/languages/localization.fr.translation", "res://assets/languages/localization.ja.translation", "res://assets/languages/localization.ko.translation", "res://assets/languages/localization.yue.translation", "res://assets/languages/localization.zh.translation")
+
 [layer_names]
 
 2d_physics/layer_1="Player"

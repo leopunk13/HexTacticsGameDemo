@@ -1,10 +1,4 @@
-res://scripts/hex_grid.gd
-res://scenes/main.tscn
-res://scripts/map_generator.gd
-res://scenes/maps/map01.4.translation
-res://scripts/hex_tile.gd
-res://scenes/maps/map01.0.translation
-res://scripts/hex_utils.gd
-res://scripts/battle_manager.gd
-res://scripts/debug_log.gd
 res://scripts/unit.gd
+res://scenes/main.tscn
+res://scripts/battle_manager.gd
+res://scenes/game_world.tscn
