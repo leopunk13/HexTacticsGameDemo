@@ -7,7 +7,6 @@ texture = ExtResource("1_spywu")
 texture_region_size = Vector2i(128, 128)
 use_texture_padding = false
 0:0/0 = 0
-0:0/0/terrain = 0
 
 [sub_resource type="TileSet" id="TileSet_i5k1u"]
 tile_shape = 3
@@ -15,5 +14,6 @@ tile_size = Vector2i(95, 110)
 sources/0 = SubResource("TileSetAtlasSource_durro")
 
 [node name="water00" type="TileMapLayer" unique_id=1382777261]
+scale = Vector2(1, 0.65)
 tile_map_data = PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 96)
 tile_set = SubResource("TileSet_i5k1u")

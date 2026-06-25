@@ -59,7 +59,7 @@ func _on_turn_changed(turn: int, team: String) -> void:
 	hud.update_turn(turn, team)
 
 func _on_state_changed(new_state: int) -> void:
-	hud.update_state_hint(new_state)
+	#hud.update_state_hint(new_state)
 	if new_state == BattleManager.BattleState.SELECT_UNIT:
 		hud.hide_unit_info()
 

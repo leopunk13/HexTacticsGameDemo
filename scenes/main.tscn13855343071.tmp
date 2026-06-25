@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dfiffn81wmwca"]
+
+[ext_resource type="PackedScene" uid="uid://qs3wt34ncv7o" path="res://scenes/game_world.tscn" id="1_sugp2"]
+[ext_resource type="Script" uid="uid://7l0506qfhmf" path="res://scripts/main.gd" id="1_tbgi4"]
+[ext_resource type="PackedScene" uid="uid://pnxljbml3cpd" path="res://scenes/hud.tscn" id="2"]
+[ext_resource type="Script" uid="uid://ctyda40dhhtda" path="res://scripts/camera_controller.gd" id="5_tefeu"]
+[ext_resource type="PackedScene" uid="uid://c8aoas11l7tfq" path="res://scenes/player.tscn" id="6_o6xl0"]
+[ext_resource type="Script" uid="uid://br6sqqwbeat2t" path="res://scripts/battle_manager.gd" id="6_tefeu"]
+
+[node name="Main" type="Node" unique_id=1765558555]
+script = ExtResource("1_tbgi4")
+
+[node name="Player" parent="." unique_id=593568900 instance=ExtResource("6_o6xl0")]
+
+[node name="GameWorld" parent="." unique_id=668945472 instance=ExtResource("1_sugp2")]
+visible = false
+
+[node name="forest02" parent="GameWorld/TileSet" parent_id_path=PackedInt32Array(668945472, 621025693) index="4" unique_id=2072043215]
+visible = false
+
+[node name="MapGenerator" parent="GameWorld" index="3" unique_id=706199477]
+visible = false
+
+[node name="HUD" parent="." unique_id=1518662284 instance=ExtResource("2")]
+visible = false
+
+[node name="CameraController" type="Camera2D" parent="." unique_id=1759160680]
+visible = false
+script = ExtResource("5_tefeu")
+
+[node name="BattleManager" type="Node2D" parent="." unique_id=198267202]
+visible = false
+script = ExtResource("6_tefeu")
+
+[connection signal="tile_clicked" from="GameWorld/HexTile" to="Player/Unit" method="_on_hex_tile_tile_clicked"]
+[connection signal="tile_clicked" from="GameWorld/HexTile" to="GameWorld/HexGrid" method="_on_hex_tile_tile_clicked"]
+[connection signal="tile_clicked" from="GameWorld/HexTile" to="BattleManager" method="_on_hex_tile_tile_clicked"]
+
+[editable path="Player"]
+[editable path="Player/Unit"]
+[editable path="GameWorld"]

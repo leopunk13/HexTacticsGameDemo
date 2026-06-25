@@ -11,7 +11,7 @@ const HEX_SIZE: float = 50.0
 ## 等距视角Y轴压缩比（模拟从斜上方俯视的效果）
 ## 值越小，视角越平（越接近侧面）；值越大，越接近正俯视
 ## Those Who Rule 风格约为 0.55-0.65
-const ISOMETRIC_Y_RATIO: float = 0.98
+const ISOMETRIC_Y_RATIO: float = 0.65
 
 ## 地形类型枚举
 enum TerrainType {

@@ -13,5 +13,6 @@ tile_size = Vector2i(95, 110)
 sources/0 = SubResource("TileSetAtlasSource_i45ps")
 
 [node name="grass01" type="TileMapLayer" unique_id=377310247]
+scale = Vector2(1, 0.65)
 tile_map_data = PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 96)
 tile_set = SubResource("TileSet_durro")

@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://bmpdhkd7v2tmm"]
+
+[ext_resource type="StyleBox" uid="uid://c0rk2u638ury1" path="res://Theme&StyleBox/hover_button.tres" id="1_hkba4"]
+[ext_resource type="StyleBox" uid="uid://c5erxq7hqpt6t" path="res://Theme&StyleBox/normal_button.tres" id="2_vcs3n"]
+[ext_resource type="Texture2D" uid="uid://dq6vqbtg3kc7m" path="res://assets/rpg_gui_v1/paper background.png" id="3_hkba4"]
+[ext_resource type="Script" uid="uid://bmamsklp3qxkl" path="res://scripts/game_gui.gd" id="3_vcs3n"]
+[ext_resource type="FontFile" uid="uid://8jmwtbwo7nfa" path="res://assets/fonts/alagard_by_pix3m-d6awiwp.ttf" id="4_3ccff"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hkba4"]
+
+[sub_resource type="Theme" id="Theme_5i074"]
+Button/styles/focus = SubResource("StyleBoxEmpty_hkba4")
+Button/styles/hover = ExtResource("1_hkba4")
+Button/styles/normal = ExtResource("2_vcs3n")
+
+[sub_resource type="LabelSettings" id="LabelSettings_5uqcj"]
+font = ExtResource("4_3ccff")
+font_size = 32
+font_color = Color(1, 1, 0.047058824, 1)
+outline_size = 1
+shadow_color = Color(0.029506557, 0.029506557, 0.029506557, 0)
+
+[node name="GameMenu" type="Control" unique_id=2004912699]
+layout_mode = 3
+anchor_left = 0.46600002
+anchor_top = 0.5
+anchor_right = 0.46600002
+anchor_bottom = 0.5
+offset_left = -296.83203
+offset_top = -199.0
+offset_right = -296.83203
+offset_bottom = -199.0
+theme = SubResource("Theme_5i074")
+script = ExtResource("3_vcs3n")
+
+[node name="MainMenu" type="NinePatchRect" parent="." unique_id=1539957538]
+layout_mode = 0
+offset_left = 189.0
+offset_top = -74.0
+offset_right = 443.0
+offset_bottom = 428.0
+pivot_offset = Vector2(3.1118546, 0.59680176)
+texture = ExtResource("3_hkba4")
+region_rect = Rect2(0.5824585, 1.6984253, 74.55961, 73.603714)
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 6
+patch_margin_bottom = 4
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[node name="GameTitleLabel" type="Label" parent="MainMenu" unique_id=413024242]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 71.0
+offset_right = 217.0
+offset_bottom = 200.0
+text = "The War Of The Magical World"
+label_settings = SubResource("LabelSettings_5uqcj")
+horizontal_alignment = 1
+autowrap_mode = 1
+
+[node name="NewContainer" type="VBoxContainer" parent="MainMenu" unique_id=1844528796]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.511
+anchor_top = 0.5
+anchor_right = 1.511
+anchor_bottom = 0.5
+offset_left = -356.794
+offset_top = -36.0
+offset_right = -160.794
+offset_bottom = 93.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="NewGameBtn" type="Button" parent="MainMenu/NewContainer" unique_id=1453634706]
+layout_mode = 2
+text = "NEWGAME"
+
+[node name="SettingsBtn" type="Button" parent="MainMenu/NewContainer" unique_id=261104304]
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="QuitBtn" type="Button" parent="MainMenu/NewContainer" unique_id=366413052]
+layout_mode = 2
+text = "QUIT"
+
+[node name="SettingsMenu" type="GridContainer" parent="." unique_id=1600829654]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Save&LoadPanel" type="Panel" parent="." unique_id=1395401173]
+visible = false
+clip_contents = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Save&LoadPanel" unique_id=170153453]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -167.5
+offset_top = -143.0
+offset_right = 167.5
+offset_bottom = 143.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SaveList" type="VBoxContainer" parent="Save&LoadPanel/ScrollContainer" unique_id=1287463711]
+layout_mode = 2

@@ -51,6 +51,23 @@ func _highlight_selectable_units() -> void:
 			var tile: HexTile = HexGrids.get_tile(unit.grid_coord)
 			if tile:
 				tile.highlight_type = HexTile.HighlightType.SELECTED
+				var mouse_pos: Vector2 = get_global_mouse_position()
+				var clicked_coord: Vector2i = HexUtils.pixel_to_axial(mouse_pos.x, mouse_pos.y)
+				# 设置新位置
+				var new_tile: HexTile = HexGrids.get_tile(clicked_coord)
+				if new_tile:
+					new_tile.highlight_type = HexTile.HighlightType.SELECTED
+					DebugLog.debug_nospam("update_visual","HighlightType==SELECTED")
+					if new_tile.highlight_overlay != null:
+			
+						var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
+							Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
+						)
+						new_tile.highlight_overlay.polygon = PackedVector2Array(unit_corners)
+		
+						new_tile.highlight_overlay.color = Color(1.0, 1.0, 0.2, 0.4)
+						new_tile.highlight_overlay.z_index = 1
+						new_tile.highlight_overlay.offset = Vector2(0,4)
 
 
 
@@ -108,41 +125,78 @@ func _handle_select_unit(tile: HexTile) -> void:
 					add_child(highlight)
 
 		# 选中单位高亮
-		tile.highlight_type = HexTile.HighlightType.SELECTED
-		DebugLog.debug_nospam("update_visual","HighlightType==SELECTED")
-		if tile.highlight_overlay != null:
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		var cur_pixel: Vector2 = HexUtils.axial_to_pixel(selected_unit.grid_coord.x,selected_unit.grid_coord.y)
+		var clicked_coord: Vector2i = HexUtils.pixel_to_axial(mouse_pos.x, mouse_pos.y)
+		if clicked_coord != selected_unit.grid_coord:
+			# 设置新位置
+			var new_tile: HexTile = HexGrids.get_tile(clicked_coord)
+			if new_tile:
+				new_tile.highlight_type = HexTile.HighlightType.SELECTED
+				DebugLog.debug_nospam("update_visual","HighlightType==SELECTED")
+				if new_tile.highlight_overlay != null:
 			
-			var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
-				Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
-			)
-			tile.highlight_overlay.polygon = PackedVector2Array(unit_corners)
+					var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
+						Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
+					)
+					new_tile.highlight_overlay.polygon = PackedVector2Array(unit_corners)
 		
-			tile.highlight_overlay.color = Color(1.0, 1.0, 0.2, 0.4)
-			tile.highlight_overlay.z_index = 1
-			tile.highlight_overlay.offset = Vector2(0,4)
+					new_tile.highlight_overlay.color = Color(1.0, 1.0, 0.2, 0.4)
+					new_tile.highlight_overlay.z_index = 1
+					new_tile.highlight_overlay.offset = Vector2(0,4)
 
+				else:
+					var highlight_unit: Polygon2D = Polygon2D.new()					
+					var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
+						Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
+					)
+					highlight_unit.polygon = PackedVector2Array(unit_corners)
+		
+					highlight_unit.color = Color(1.0, 1.0, 0.2, 0.4)
+					highlight_unit.z_index = 1
+					highlight_unit.offset = Vector2(0,4)
+					new_tile.highlight_overlay = highlight_unit
+					add_child(highlight_unit)
 		else:
-			var highlight_unit: Polygon2D = Polygon2D.new()					
-			var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
-				Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
-			)
-			highlight_unit.polygon = PackedVector2Array(unit_corners)
+			tile.highlight_type = HexTile.HighlightType.SELECTED
+			DebugLog.debug_nospam("update_visual","HighlightType==SELECTED")
+			if tile.highlight_overlay != null:
+			
+				var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
+					Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
+				)
+				tile.highlight_overlay.polygon = PackedVector2Array(unit_corners)
 		
-			highlight_unit.color = Color(1.0, 1.0, 0.2, 0.4)
-			highlight_unit.z_index = 1
-			highlight_unit.offset = Vector2(0,4)
+				tile.highlight_overlay.color = Color(1.0, 1.0, 0.2, 0.4)
+				tile.highlight_overlay.z_index = 1
+				tile.highlight_overlay.offset = Vector2(0,4)
+
+			else:
+				var highlight_unit: Polygon2D = Polygon2D.new()					
+				var unit_corners: PackedVector2Array = HexUtils.hex_top_corners(
+					Vector2.ZERO, HexUtils.HEX_SIZE+1, HexUtils.TERRAIN_HEIGHT.get(HexUtils.TerrainType.GRASS, 4.0)
+				)
+				highlight_unit.polygon = PackedVector2Array(unit_corners)
 		
-			tile.highlight_overlay = highlight_unit
-			add_child(highlight_unit)
+				highlight_unit.color = Color(1.0, 1.0, 0.2, 0.4)
+				highlight_unit.z_index = 1
+				highlight_unit.offset = Vector2(0,4)
+		
+				tile.highlight_overlay = highlight_unit
+				add_child(highlight_unit)
 		_set_state(BattleState.SELECT_MOVE)
 		
 ## 处理选择移动目标
 func _handle_select_move(tile: HexTile) -> void:
-	var clicked_coord: Vector2i = tile.axial_coord
+	# 从全局鼠标位置计算轴向坐标，确保获取实际点击地块的坐标
+	# （tile 参数可能来自场景中未初始化的 HexTile，axial_coord 始终为 ZERO）
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var clicked_coord: Vector2i = HexUtils.pixel_to_axial(mouse_pos.x, mouse_pos.y)
 	DebugLog.debug_nospam("func_call","_handle_select_move")
 	
 	HexGrids.clear_highlights()
-	tile.highlight_overlay.color  = Color.TRANSPARENT
+	if tile.highlight_overlay != null:
+		tile.highlight_overlay.color  = Color.TRANSPARENT
 	# 点击攻击范围内的敌人
 	var selected_unit:Unit = tile.occupying_unit
 	var attackable_coords = HexGrids.get_attackable_tiles(selected_unit.grid_coord, selected_unit.attack_range, Unit.Team.PLAYER)
@@ -156,7 +210,7 @@ func _handle_select_move(tile: HexTile) -> void:
 				_set_state(BattleState.SELECT_UNIT)
 			else:
 				# 重新显示可用范围
-				_show_remaining_actions()
+				_show_remaining_actions(selected_unit)
 			return
 	
 	var reachable_tiles: Dictionary = HexGrids.get_reachable_tiles(selected_unit.grid_coord, selected_unit.move_range)
@@ -177,6 +231,9 @@ func _handle_select_move(tile: HexTile) -> void:
 
 			selected_unit.move_along_path(path)
 			_set_state(BattleState.UNIT_MOVING)
+			# 避免重复连接信号（单位多次移动时会重复调用connect）
+			if not selected_unit.unit_moved.is_connected(_on_unit_unit_moved):
+				selected_unit.unit_moved.connect(_on_unit_unit_moved)
 			return
 
 	# 点击自身（取消选择/待机）
@@ -195,7 +252,10 @@ func _handle_select_move(tile: HexTile) -> void:
 
 ## 处理选择攻击目标
 func _handle_select_attack(tile: HexTile) -> void:
-	var clicked_coord: Vector2i = tile.axial_coord
+	# 从全局鼠标位置计算轴向坐标，确保获取实际点击地块的坐标
+	# （tile 参数可能来自场景中未初始化的 HexTile，axial_coord 始终为 ZERO）
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var clicked_coord: Vector2i = HexUtils.pixel_to_axial(mouse_pos.x, mouse_pos.y)
 	DebugLog.debug_nospam("func_call","_handle_select_attack")
 	if clicked_coord in attackable_coords:
 		var target: Unit = tile.occupying_unit
@@ -205,18 +265,18 @@ func _handle_select_attack(tile: HexTile) -> void:
 			if not selected_unit.can_act():
 				_set_state(BattleState.SELECT_UNIT)
 			else:
-				_show_remaining_actions()
+				_show_remaining_actions(selected_unit)
 			return
 
 	# 取消
 	_set_state(BattleState.SELECT_UNIT)
 
 ## 显示剩余可用行动
-func _show_remaining_actions() -> void:
+func _show_remaining_actions(unit:Unit) -> void:
 	HexGrids.clear_highlights()
 	attackable_coords.clear()
 	reachable_tiles.clear()
-
+	selected_unit = unit
 	# 选中高亮
 	var tile: HexTile = HexGrids.get_tile(selected_unit.grid_coord)
 	if tile:
@@ -256,6 +316,7 @@ func _set_state(new_state: int) -> void:
 		BattleState.SELECT_ATTACK:
 			pass
 
+
 ## 点击地块
 func _on_hex_tile_tile_clicked(tile: HexTile) -> void:
 	match state:
@@ -265,3 +326,20 @@ func _on_hex_tile_tile_clicked(tile: HexTile) -> void:
 			_handle_select_move(tile)
 		BattleState.SELECT_ATTACK:
 			_handle_select_attack(tile)
+
+## 单位行动完成回调
+func _on_unit_action_finished(unit: Unit) -> void:
+	pass # Replace with function body.
+
+## 单位移动完成回调
+func _on_unit_unit_moved(unit: Unit) -> void:
+	if state == BattleState.UNIT_MOVING:
+		# 移动完成后检查是否可以攻击
+		if not unit.has_attacked:
+			_show_remaining_actions(unit)
+		else:
+			_set_state(BattleState.SELECT_UNIT)
+
+## 单位死亡回调
+func _on_unit_unit_died(unit: Unit) -> void:
+	pass # Replace with function body.
