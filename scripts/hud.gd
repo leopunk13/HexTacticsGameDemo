@@ -1,5 +1,10 @@
 extends CanvasLayer
 ## HUD界面 - 血条、法力条、技能栏、波次信息
+@onready var skill_bar: HBoxContainer = $BottomPanel/SkillBar
+@onready var controls: RichTextLabel = $Controls
+@onready var game_menu: Control = %GameMenu
+@onready var bottom_panel: Panel = $BottomPanel
+
 
 var unit_info_panel: PanelContainer
 var unit_name_label: Label
@@ -19,6 +24,50 @@ var skill_colors: Dictionary = {
 
 
 func _ready() -> void:
+	# 不要用 XXX.new() 覆盖 @onready 节点引用，否则操作的是脱离场景树的新实例
+	# 场景中的真实节点（$BottomPanel 等）会保持原状不受控
+	show_game_menu()
+	bottom_panel.visible = false
+	controls.visible = false
+	# 单位信息面板
+	unit_info_panel = PanelContainer.new()
+	unit_info_panel.name = "UnitInfoPanel"
+	unit_info_panel.custom_minimum_size = Vector2(0, 60)
+	unit_info_panel.visible = false
+	
+	var info_hbox: HBoxContainer = HBoxContainer.new()
+	info_hbox.add_theme_constant_override("separation", 20)
+
+	# 左侧留白
+	var info_left: Control = Control.new()
+	info_left.custom_minimum_size = Vector2(20, 0)
+	info_hbox.add_child(info_left)
+
+	unit_name_label = Label.new()
+	unit_name_label.name = "UnitName"
+	unit_name_label.add_theme_font_size_override("font_size", 16)
+	unit_name_label.add_theme_color_override("font_color", Color(1, 0.9, 0.5))
+	info_hbox.add_child(unit_name_label)
+
+	unit_hp_label = Label.new()
+	unit_hp_label.name = "UnitHP"
+	unit_hp_label.add_theme_font_size_override("font_size", 14)
+	unit_hp_label.add_theme_color_override("font_color", Color(0.4, 1.0, 0.4))
+	info_hbox.add_child(unit_hp_label)
+
+	unit_stats_label = Label.new()
+	unit_stats_label.name = "UnitStats"
+	unit_stats_label.add_theme_font_size_override("font_size", 13)
+	unit_stats_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	info_hbox.add_child(unit_stats_label)
+	#hide_unit_info()
+	## 等待场景就绪后绑定玩家
+	#await get_tree().process_frame
+	#_bind_player()
+
+
+func show_skill_bar() -> void:
+	skill_bar.visible = true
 	# 初始化技能栏样式
 	for i in range(4):
 		var skill_panel: Panel = get_node("BottomPanel/SkillBar/Skill" + str(i + 1))
@@ -28,15 +77,19 @@ func _ready() -> void:
 		style.corner_radius_top_right = 4
 		style.corner_radius_bottom_left = 4
 		style.corner_radius_bottom_right = 4
-		#skill_panel.add_theme_stylebox_override("panel", style)
+		skill_panel.add_theme_stylebox_override("panel", style)
 
-		#var overlay: ColorRect = skill_panel.get_node("CooldownOverlay")
-		#skill_cooldown_overlays.append(overlay)
+		var overlay: ColorRect = skill_panel.get_node("CooldownOverlay")
+		skill_cooldown_overlays.append(overlay)
 
-	# 等待场景就绪后绑定玩家
-	await get_tree().process_frame
-	_bind_player()
+func hide_skill_bar() -> void:
+	skill_bar.visible = false
 
+func show_game_menu() -> void:
+	game_menu.visible = true
+	
+func hide_game_menu() -> void:
+	game_menu.visible = false
 
 func _bind_player() -> void:
 	var players := get_tree().get_nodes_in_group("player")
@@ -63,9 +116,12 @@ func show_unit_info(unit: Unit) -> void:
 	unit_info_panel.visible = true
 	var team_str: String = "玩家" if unit.team == Unit.Team.PLAYER else "敌方"
 	unit_name_label.text = "[%s] %s" % [team_str, unit.unit_name]
-	unit_hp_label.text = "HP: %d/%d" % [unit.current_hp, unit.max_hp]
-	unit_stats_label.text = "ATK:%d DEF:%d MOV:%d RNG:%d" % [unit.attack_power, unit.defense, unit.move_range, unit.attack_range]
+	unit_hp_label.text = "HP: %d/%d" % [unit.health, unit.max_health]
+	unit_stats_label.text = "ATK:%d DEF:%d MOV:%d RNG:%d" % [unit.attack_damage, unit.armor_class, unit.move_range, unit.attack_range]
 
+## 隐藏单位信息
+func hide_unit_info() -> void:
+	unit_info_panel.visible = false
 
 func _update_skill_cooldowns() -> void:
 	for i in range(4):

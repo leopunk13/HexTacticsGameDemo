@@ -20,6 +20,16 @@ func _ready() -> void:
 	y_sort_enabled = true
 	#generate_map()
 
+## 集中处理地块点击：用 pixel_to_axial 精确定位唯一点击地块
+## 避免每个 HexTile 各自判定导致相邻地块同时 emit tile_clicked
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		var clicked_coord: Vector2i = HexUtils.pixel_to_axial(mouse_pos.x, mouse_pos.y)
+		var tile: HexTile = get_tile(clicked_coord)
+		if tile != null:
+			tile_clicked.emit(tile)
+
 ## 生成六边形地图
 func generate_map() -> void:
 	_clear_map()

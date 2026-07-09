@@ -23,7 +23,15 @@ const RANDOM_SEED = 24
 func _ready() -> void:
 	seed(RANDOM_SEED)
 	#读取terrains字典
-	var terrains_dicts = load(terrains_dict_path).data
+	var json_text: String = FileAccess.get_file_as_string(terrains_dict_path)
+	if json_text.is_empty():
+		push_error("terrains.json 读取失败: %s" % terrains_dict_path)
+		return
+	var json: JSON = JSON.new()
+	if json.parse(json_text) != OK:
+		push_error("terrains.json 解析失败: %s (行 %d)" % [json.get_error_message(), json.get_error_line()])
+		return
+	var terrains_dicts: Dictionary = json.data
 	for key in terrains_dicts:
 		var index = int(key)
 		terrain_dict[index] = []
@@ -66,25 +74,26 @@ func generate_map_from_file(file_path):
 			if terrain_type in terrain_dict:
 				var rand_index:int = randi() % terrain_dict[terrain_type].size()
 				var terrain_instance =  terrain_dict[terrain_type][rand_index].instantiate()
-				var vector2i_value: Vector2i = HexUtils.axial_to_pixel((start_x + x), (start_y + y))
-				terrain_instance.transform.origin = Vector2(vector2i_value)
+				# axial_to_pixel 返回 Vector2（像素坐标），变量类型必须匹配
+				var pixel_pos: Vector2 = HexUtils.axial_to_pixel((start_x + x), (start_y + y))
+				terrain_instance.transform.origin = pixel_pos
 				terrain_instance.set_name("{0}_{1}_{2}".format([terrain_types[terrain_type],y,x]))
 				add_child(terrain_instance)
 				terrain_instance.set_owner(self)
-				
-				HexGrids._create_tile(Vector2((start_x + x), (start_y + y)), terrain_type)
-				
-			
-				
+
+				# _create_tile 需要 Vector2i（轴向坐标）作为 key，不能传 Vector2
+				var axial_coord: Vector2i = Vector2i((start_x + x), (start_y + y))
+				HexGrids._create_tile(axial_coord, terrain_type)
+
 				# 坐标标签
-				var 	label: Label = Label.new()
+				var label: Label = Label.new()
 				label.add_theme_font_size_override("font_size", 8)
 				label.modulate = Color(1, 1, 1, 0.4)
 				coord_label = label
 				# === 坐标标签 ===
 				if coord_label:
 					coord_label.text = "%d,%d" % [(start_x + x), (start_y + y)]
-					coord_label.position = Vector2(vector2i_value.x-15, vector2i_value.y-6 - terrain_height)
+					coord_label.position = Vector2(pixel_pos.x-15, pixel_pos.y-6 - terrain_height)
 				add_child(label)
 				
 				

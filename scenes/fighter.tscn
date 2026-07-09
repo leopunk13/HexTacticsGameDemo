@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://c8aoas11l7tfq"]
+[gd_scene format=3 uid="uid://0hnh7fp4yuvl"]
 
-[ext_resource type="Script" uid="uid://creh4n6iuojnd" path="res://scenes/player.gd" id="1_g2els"]
+[ext_resource type="Script" uid="uid://creh4n6iuojnd" path="res://scripts/fighter.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://br362xg16tc2h" path="res://assets/CHINESE_GIRL/Character_animations_no_background.png" id="2_qhqgy"]
 [ext_resource type="PackedScene" uid="uid://cyp57a6rlv5fd" path="res://scenes/unit.tscn" id="3_qhqgy"]
 
@@ -153,7 +153,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Player" type="CharacterBody2D" unique_id=806694034]
+[node name="Fighter" type="CharacterBody2D" unique_id=806694034]
 script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1056561178]

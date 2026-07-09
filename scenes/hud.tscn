@@ -42,7 +42,6 @@ text = "旋风斩"
 horizontal_alignment = 1
 
 [node name="CooldownOverlay" type="ColorRect" parent="BottomPanel/SkillBar/Skill1" unique_id=1267895481]
-visible = false
 layout_mode = 0
 offset_right = 60.0
 offset_bottom = 60.0
@@ -163,4 +162,5 @@ text = "[b]操作说明[/b]
 WASD - 移动 | 鼠标左键 - 攻击
 1-4 - 技能 | Q - 药水"
 
-[node name="GameMenu" parent="." unique_id=2004912699 instance=ExtResource("2_oo0fn")]
+[node name="GameMenu" parent="." unique_id=1193393698 instance=ExtResource("2_oo0fn")]
+unique_name_in_owner = true

@@ -24,8 +24,6 @@ signal unit_died(unit: Unit)
 ## 队伍枚举
 enum Team { PLAYER, ENEMY }
 
-signal tile_clicked(tile: HexTile)
-
 # 属性
 ## 单位名称
 @export var unit_name: String = ""
@@ -68,7 +66,7 @@ var health: float
 var mana: float
 var is_attacking: bool = false
 var attack_timer: float = 0.0
-var facing_direction: Vector2 = Vector2.DOWN
+var facing_direction: Vector2 = Vector2.RIGHT
 
 ## 本回合是否已移动
 var has_moved: bool = false
@@ -102,10 +100,15 @@ func _ready() -> void:
 	if attack_collision:
 		attack_collision.disabled = true
 	# 根据队伍添加到对应分组
-	if team == Team.PLAYER:
-		add_to_group("player")
-	elif team == Team.ENEMY:
-		add_to_group("enemy")
+	# 仅当父节点是 Unit（即自身是 Fighter/Saber 容器内的子 Unit）时才加入分组
+	# 容器节点本身（Fighter/Saber，其父节点是 Main 等非 Unit）不加入分组，
+	# 否则 _register_units 会将容器（grid_coord 始终为默认 (0,0)）也注册到地块，
+	# 覆盖正确的子 Unit 注册
+	if get_parent() is Unit:
+		if team == Team.PLAYER:
+			add_to_group("player")
+		elif team == Team.ENEMY:
+			add_to_group("enemy")
 	# 获取工具单例
 	utils = get_node_or_null("/root/Utils")
 	# 同步父节点（Player/Enemy）位置到地块中心
@@ -119,6 +122,7 @@ func _ready() -> void:
 func _sync_position_to_tile() -> void:
 	var move_node: Node2D = get_parent() if get_parent() is Node2D else self
 	var tile_center: Vector2 = HexUtils.axial_to_pixel(grid_coord.x, grid_coord.y)
+	tile_center.y -= 25.0
 	move_node.global_position = tile_center
 
 
@@ -627,8 +631,3 @@ func move_along_path(path: Array[Vector2i]) -> void:
 	# 切换为跑步动画
 	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("run"):
 		animated_sprite.play("run")
-
-
-func _on_hex_tile_tile_clicked(tile: HexTile) -> void:
-	var curPos = Vector2(position.x, position.y)
-	tile.occupying_unit = self

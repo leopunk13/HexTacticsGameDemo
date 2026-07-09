@@ -77,10 +77,8 @@ func is_occupied() -> bool:
 func get_sort_y() -> float:
 	return HexUtils.get_sort_y(axial_coord)
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-		DebugLog.debug_nospam("participant_turn",true)
-		tile_clicked.emit(self)
+## 点击判定已集中到 HexGrid._unhandled_input，避免相邻地块的外接圆重叠
+## 导致一次点击触发多个 tile_clicked 信号
 
 func _on_mouse_entered() -> void:
 	tile_hovered.emit(self)
