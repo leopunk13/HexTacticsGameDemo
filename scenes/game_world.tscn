@@ -244,10 +244,6 @@ sources/38 = SubResource("TileSetAtlasSource_pn3v3")
 visible = false
 script = ExtResource("5_wbbl4")
 
-[node name="HexTile" type="Area2D" parent="." unique_id=986512198]
-visible = false
-script = ExtResource("6_6c6v5")
-
 [node name="TileSet" type="TileMapLayer" parent="." unique_id=621025693]
 scale = Vector2(1, 0.58)
 tile_set = SubResource("TileSet_0vfqx")

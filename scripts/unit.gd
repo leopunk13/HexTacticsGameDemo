@@ -14,15 +14,15 @@ signal unit_died(unit: Unit)
 
 
 # 引用
-# 注意：Player 场景将 Unit 作为子节点实例化，因此 @onready 需要在子节点中查找
+# 注意：Player/Enemy 场景将 Unit 作为子节点实例化，因此 @onready 需要在子节点中查找
 @onready var attack_area: Area2D = get_node_or_null("AttackArea")
 @onready var attack_collision: CollisionShape2D = get_node_or_null("AttackArea/AttackCollision")
 @onready var camera: Camera2D = get_node_or_null("Camera2D")
+# AnimatedSprite2D 挂在父节点 Player/Enemy 上，作为同级节点查找
+@onready var animated_sprite: AnimatedSprite2D = get_node_or_null("../AnimatedSprite2D")
 
 ## 队伍枚举
 enum Team { PLAYER, ENEMY }
-
-signal tile_clicked(tile: HexTile)
 
 # 属性
 ## 单位名称
@@ -38,11 +38,35 @@ signal tile_clicked(tile: HexTile)
 ## 所属队伍
 @export var team: Team = Team.PLAYER
 
+# ==================== 命中判定系统属性 ====================
+## 技巧（决定基础命中，典型50~90）
+@export var technique: float = 70.0
+## 敏捷（决定基础闪避，典型0~40）
+@export var agility: float = 20.0
+## 武器命中修正（-10~+30）
+@export var weapon_hit_modifier: float = 0.0
+## 熟练加值（使用熟练武器时获得，+10~+20）
+@export var proficiency_bonus: float = 10.0
+## 是否熟练使用当前武器
+@export var is_proficient: bool = true
+## 护甲闪避惩罚（重甲为负值，-20~0）
+@export var armor_dodge_penalty: float = 0.0
+
+## 状态命中修正（key: 状态名, value: 命中修正值，如"精准"+15、"目盲"-30）
+var status_hit_modifiers: Dictionary = {}
+## 状态闪避修正（key: 状态名, value: 闪避修正值，如"迟缓"-15）
+var status_dodge_modifiers: Dictionary = {}
+
+## 命中率下限（总有失手可能）
+const HIT_CHANCE_MIN: float = 5.0
+## 命中率上限（总有命中可能）
+const HIT_CHANCE_MAX: float = 95.0
+
 var health: float
 var mana: float
 var is_attacking: bool = false
 var attack_timer: float = 0.0
-var facing_direction: Vector2 = Vector2.DOWN
+var facing_direction: Vector2 = Vector2.RIGHT
 
 ## 本回合是否已移动
 var has_moved: bool = false
@@ -76,13 +100,32 @@ func _ready() -> void:
 	if attack_collision:
 		attack_collision.disabled = true
 	# 根据队伍添加到对应分组
-	if team == Team.PLAYER:
-		add_to_group("player")
-	elif team == Team.ENEMY:
-		add_to_group("enemy")
+	# 仅当父节点是 Unit（即自身是 Fighter/Saber 容器内的子 Unit）时才加入分组
+	# 容器节点本身（Fighter/Saber，其父节点是 Main 等非 Unit）不加入分组，
+	# 否则 _register_units 会将容器（grid_coord 始终为默认 (0,0)）也注册到地块，
+	# 覆盖正确的子 Unit 注册
+	if get_parent() is Unit:
+		if team == Team.PLAYER:
+			add_to_group("player")
+		elif team == Team.ENEMY:
+			add_to_group("enemy")
 	# 获取工具单例
 	utils = get_node_or_null("/root/Utils")
-	
+	# 同步父节点（Player/Enemy）位置到地块中心
+	# 场景中 Player 的初始 position 是手动设置的偏移值，与 grid_coord 对应的
+	# 地块中心不一致，移动后会跳到正确位置造成视觉偏差
+	_sync_position_to_tile()
+
+## 同步父节点（Player/Enemy）的全局位置到 grid_coord 对应的地块中心
+## AnimatedSprite2D 的 position 偏移（如 (0,-11)）是视觉调整，使精灵
+## 看起来"站在"地块上，不需要补偿——移动时也使用同样的地块中心坐标
+func _sync_position_to_tile() -> void:
+	var move_node: Node2D = get_parent() if get_parent() is Node2D else self
+	var tile_center: Vector2 = HexUtils.axial_to_pixel(grid_coord.x, grid_coord.y)
+	tile_center.y -= 25.0
+	move_node.global_position = tile_center
+
+
 ## 设置单位属性
 func setup(data: Dictionary) -> void:
 	unit_name = data.get("name", unit_name)
@@ -137,15 +180,19 @@ func _handle_movement() -> void:
 		_move_path.clear()
 		_move_index = 0
 		has_moved = true
+		# 切回待机动画
+		if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("idle"):
+			animated_sprite.play("idle")
 		unit_moved.emit(self)
 		return
 
 	# 当前目标点的像素坐标（世界坐标）
 	var target_coord: Vector2i = _move_path[_move_index]
 	var target_pos: Vector2 = HexUtils.axial_to_pixel(target_coord.x, target_coord.y)
-	target_pos.y -= 10
 	# 朝目标移动（使用 global_position 确保世界坐标一致）
 	var direction: Vector2 = (target_pos - move_node.global_position).normalized()
+	# 根据移动方向水平分量翻转 run 动画
+	_update_sprite_flip(direction)
 	var step: float = _move_speed * get_physics_process_delta_time()
 
 	if move_node.global_position.distance_to(target_pos) <= step:
@@ -204,6 +251,104 @@ func perform_attack() -> void:
 	is_attacking = false
 	if attack_collision:
 		attack_collision.disabled = true
+
+
+# ==================== 命中判定系统 ====================
+
+## 计算攻击方命中值
+## 命中值 = 基础命中(技巧) + 武器修正 + 熟练加值 + 地形修正 + 状态修正
+func calculate_hit_value() -> float:
+	var hit: float = technique + weapon_hit_modifier
+	if is_proficient:
+		hit += proficiency_bonus
+	hit += _get_terrain_hit_modifier()
+	for mod in status_hit_modifiers.values():
+		hit += mod
+	return hit
+
+## 计算防御方闪避值
+## 闪避值 = 基础闪避(敏捷) + 护甲惩罚 + 地形修正 + 状态修正
+func calculate_dodge_value() -> float:
+	var dodge: float = agility + armor_dodge_penalty
+	dodge += _get_terrain_dodge_modifier()
+	for mod in status_dodge_modifiers.values():
+		dodge += mod
+	return dodge
+
+## 获取地形命中修正（高地打低地+10，反之-10）
+## 此处以单位所处地块的地形高度作为"高地"判定依据
+func _get_terrain_hit_modifier() -> float:
+	var my_tile: HexTile = HexGrids.get_tile(grid_coord)
+	if my_tile == null:
+		return 0.0
+	# 地形高度较高视为高地，获得命中加成
+	match my_tile.terrain:
+		HexUtils.TerrainType.FOREST:
+			return 10.0
+		_:
+			return 0.0
+
+## 获取地形闪避修正（树林、掩体等提供闪避）
+func _get_terrain_dodge_modifier() -> float:
+	var my_tile: HexTile = HexGrids.get_tile(grid_coord)
+	if my_tile == null:
+		return 0.0
+	match my_tile.terrain:
+		HexUtils.TerrainType.FOREST:
+			return 15.0
+		_:
+			return 0.0
+
+## 计算对目标的最终命中率（百分比，限制在5~95之间）
+## 命中率 = 攻击方命中值 - 防御方闪避值
+func calculate_hit_chance(target: Unit) -> float:
+	var hit_value: float = calculate_hit_value()
+	var dodge_value: float = target.calculate_dodge_value()
+	var chance: float = hit_value - dodge_value
+	return clampf(chance, HIT_CHANCE_MIN, HIT_CHANCE_MAX)
+
+## 投百分骰（1d100）判定是否命中
+## 投骰 <= 命中率 则命中
+func roll_hit(target: Unit) -> bool:
+	var chance: float = calculate_hit_chance(target)
+	var roll: int = randi_range(1, 100)
+	var hit: bool = roll <= int(round(chance))
+	DebugLog.debug_nospam("hit_roll", "命中率=%d 投骰=%d 命中=%s" % [int(round(chance)), roll, str(hit)])
+	return hit
+
+## 添加状态命中修正（如"精准"+15、"目盲"-30）
+func add_status_hit_modifier(status_name: String, modifier: float) -> void:
+	status_hit_modifiers[status_name] = modifier
+
+## 移除状态命中修正
+func remove_status_hit_modifier(status_name: String) -> void:
+	status_hit_modifiers.erase(status_name)
+
+## 添加状态闪避修正（如"迟缓"-15）
+func add_status_dodge_modifier(status_name: String, modifier: float) -> void:
+	status_dodge_modifiers[status_name] = modifier
+
+## 移除状态闪避修正
+func remove_status_dodge_modifier(status_name: String) -> void:
+	status_dodge_modifiers.erase(status_name)
+
+## 攻击目标（回合制）
+## 先进行命中判定，命中则造成伤害
+func attack(target: Unit) -> void:
+	if is_dead or target == null or target.is_dead:
+		return
+	has_attacked = true
+	# 命中判定
+	if not roll_hit(target):
+		# 未命中，显示 MISS
+		DebugLog.debug_nospam("attack", "攻击未命中！")
+		if utils:
+			utils.spawn_damage_number(get_parent(), 0, target.global_position, Color.GRAY)
+		unit_attacked.emit(self, target)
+		return
+	# 命中，造成伤害
+	target.take_damage(attack_damage)
+	unit_attacked.emit(self, target)
 
 
 # ==================== 受伤与死亡 ====================
@@ -452,6 +597,28 @@ func heal(amount: float) -> void:
 ## 是否可以行动
 func can_act() -> bool:
 	return not is_dead and (not has_moved or not has_attacked)
+
+## 根据轴向坐标偏移设置朝向（共6个方向）
+## diff 为目标地块与当前地块的轴向坐标差
+func set_facing_from_coord(diff: Vector2i) -> void:
+	# 将六边形轴向偏移转换为像素方向向量
+	var target_pixel: Vector2 = HexUtils.axial_to_pixel(diff.x, diff.y)
+	if target_pixel != Vector2.ZERO:
+		facing_direction = target_pixel.normalized()
+	# 根据朝向更新 idle 动画方向
+	_update_sprite_flip(facing_direction)
+	DebugLog.debug_nospam("update_visual", "朝向已设置: %s" % str(facing_direction))
+
+## 根据方向向量更新精灵水平翻转
+## direction.x < 0 朝左翻转；direction.x > 0 朝右不翻转；垂直方向保持当前翻转
+func _update_sprite_flip(direction: Vector2) -> void:
+	if animated_sprite == null:
+		return
+	# 仅在水平分量明显时翻转，避免垂直移动时频繁抖动
+	if direction.x < -0.1:
+		animated_sprite.flip_h = true
+	elif direction.x > 0.1:
+		animated_sprite.flip_h = false
 	
 ## 移动到目标位置（沿路径）
 func move_along_path(path: Array[Vector2i]) -> void:
@@ -461,8 +628,6 @@ func move_along_path(path: Array[Vector2i]) -> void:
 	_move_path = path
 	_move_index = 0
 	_is_moving = true
-
-
-func _on_hex_tile_tile_clicked(tile: HexTile) -> void:
-	var curPos = Vector2(position.x, position.y)
-	tile.occupying_unit = self
+	# 切换为跑步动画
+	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("run"):
+		animated_sprite.play("run")

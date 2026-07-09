@@ -13,6 +13,8 @@ Button/styles/focus = SubResource("StyleBoxEmpty_hkba4")
 Button/styles/hover = ExtResource("1_hkba4")
 Button/styles/normal = ExtResource("2_vcs3n")
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ldg7d"]
+
 [sub_resource type="LabelSettings" id="LabelSettings_5uqcj"]
 font = ExtResource("4_3ccff")
 font_size = 32
@@ -32,6 +34,16 @@ offset_right = -296.83203
 offset_bottom = -199.0
 theme = SubResource("Theme_5i074")
 script = ExtResource("3_vcs3n")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2109556413]
+material = SubResource("CanvasItemMaterial_ldg7d")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2707637, 0.2501203, 0.010825479, 1)
 
 [node name="MainMenu" type="NinePatchRect" parent="." unique_id=1539957538]
 layout_mode = 0
@@ -76,25 +88,26 @@ grow_vertical = 2
 alignment = 1
 
 [node name="NewGameBtn" type="Button" parent="MainMenu/NewContainer" unique_id=1453634706]
+unique_name_in_owner = true
 layout_mode = 2
 text = "NEWGAME"
 
 [node name="SettingsBtn" type="Button" parent="MainMenu/NewContainer" unique_id=261104304]
+unique_name_in_owner = true
 layout_mode = 2
 text = "SETTINGS"
 
 [node name="QuitBtn" type="Button" parent="MainMenu/NewContainer" unique_id=366413052]
+unique_name_in_owner = true
 layout_mode = 2
 text = "QUIT"
 
 [node name="SettingsMenu" type="GridContainer" parent="." unique_id=1600829654]
-visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Save&LoadPanel" type="Panel" parent="." unique_id=1395401173]
-visible = false
 clip_contents = true
 layout_mode = 0
 offset_right = 40.0

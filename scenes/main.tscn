@@ -3,27 +3,22 @@
 [ext_resource type="PackedScene" uid="uid://qs3wt34ncv7o" path="res://scenes/game_world.tscn" id="1_sugp2"]
 [ext_resource type="Script" uid="uid://7l0506qfhmf" path="res://scripts/main.gd" id="1_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://pnxljbml3cpd" path="res://scenes/hud.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://0hnh7fp4yuvl" path="res://scenes/fighter.tscn" id="2_o6xl0"]
+[ext_resource type="PackedScene" uid="uid://c8aoas11l7tfq" path="res://scenes/archer.tscn" id="3_o6xl0"]
 [ext_resource type="Script" uid="uid://ctyda40dhhtda" path="res://scripts/camera_controller.gd" id="5_tefeu"]
-[ext_resource type="PackedScene" uid="uid://c8aoas11l7tfq" path="res://scenes/player.tscn" id="6_o6xl0"]
 [ext_resource type="Script" uid="uid://br6sqqwbeat2t" path="res://scripts/battle_manager.gd" id="6_tefeu"]
 
 [node name="Main" type="Node" unique_id=1765558555]
 script = ExtResource("1_tbgi4")
 
-[node name="Player" parent="." unique_id=806694034 instance=ExtResource("6_o6xl0")]
-position = Vector2(0, -10)
+[node name="Fighter" parent="." unique_id=806694034 instance=ExtResource("2_o6xl0")]
+visible = false
 
-[node name="AnimatedSprite2D" parent="Player" index="0" unique_id=1056561178]
-position = Vector2(0, -11)
-frame_progress = 0.6077671
+[node name="Saber" parent="." unique_id=170152807 instance=ExtResource("3_o6xl0")]
+visible = false
 
-[node name="HealthBar" parent="Player/Unit" parent_id_path=PackedInt32Array(806694034, 98471305) index="3" unique_id=1017428993]
-offset_top = -39.0
-offset_bottom = -33.0
-
-[node name="ManaBar" parent="Player/Unit" parent_id_path=PackedInt32Array(806694034, 98471305) index="4" unique_id=252730495]
-offset_top = -32.0
-offset_bottom = -27.0
+[node name="AnimatedSprite2D" parent="Saber" index="0" unique_id=1056561178]
+animation = &"idle"
 
 [node name="GameWorld" parent="." unique_id=668945472 instance=ExtResource("1_sugp2")]
 
@@ -31,7 +26,6 @@ offset_bottom = -27.0
 visible = false
 
 [node name="HUD" parent="." unique_id=1518662284 instance=ExtResource("2")]
-visible = false
 
 [node name="CameraController" type="Camera2D" parent="." unique_id=1759160680]
 script = ExtResource("5_tefeu")
@@ -39,10 +33,8 @@ script = ExtResource("5_tefeu")
 [node name="BattleManager" type="Node2D" parent="." unique_id=198267202]
 script = ExtResource("6_tefeu")
 
-[connection signal="tile_clicked" from="GameWorld/HexTile" to="Player/Unit" method="_on_hex_tile_tile_clicked"]
-[connection signal="tile_clicked" from="GameWorld/HexTile" to="GameWorld/HexGrid" method="_on_hex_tile_tile_clicked"]
-[connection signal="tile_clicked" from="GameWorld/HexTile" to="BattleManager" method="_on_hex_tile_tile_clicked"]
-
-[editable path="Player"]
-[editable path="Player/Unit"]
+[editable path="Fighter"]
+[editable path="Fighter/Unit"]
+[editable path="Saber"]
+[editable path="Saber/Unit"]
 [editable path="GameWorld"]

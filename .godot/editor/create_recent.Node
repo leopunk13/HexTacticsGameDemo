@@ -1,3 +1,5 @@
+CanvasLayer
+ColorRect
 CharacterBody2D
 Node2D
 AnimatedSprite2D
@@ -10,5 +12,3 @@ GridContainer
 NinePatchRect
 Control
 TileMapLayer
-Area2D
-Camera2D

@@ -85,7 +85,7 @@ static func axial_round(q: float, r: float) -> Vector2i:
 	elif r_diff > s_diff:
 		rr = -rq - rs
 
-	return Vector2(rq, rr)
+	return Vector2i(rq, rr)
 
 ## 获取两个轴向坐标之间的距离
 static func hex_distance(a: Vector2i, b: Vector2i) -> int:

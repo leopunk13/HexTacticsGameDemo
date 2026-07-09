@@ -1,4 +1,14 @@
-res://scripts/unit.gd
+res://scenes/archer.tscn
+res://scripts/Swordman.gd
+res://prefabs/teams/teams.json
 res://scenes/main.tscn
+res://scripts/main.gd
 res://scripts/battle_manager.gd
+res://scripts/hex_tile.gd
+res://scripts/unit.gd
 res://scenes/game_world.tscn
+res://scripts/game_gui.gd
+res://scripts/hex_grid.gd
+res://scripts/hex_utils.gd
+res://scripts/map_generator.gd
+res://prefabs/terrains/terrains.json

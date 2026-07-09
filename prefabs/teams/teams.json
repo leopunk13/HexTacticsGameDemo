@@ -1,0 +1,22 @@
+{
+	"0":{
+		"type": "fighter",
+		"coord_x": 0,
+		"coord_y": 0
+	},
+	"1":{
+		"type": "saber",
+		"coord_x": 0,
+		"coord_y": 1
+	},
+	"2":{
+		"type": "lancer",
+		"coord_x": 1,
+		"coord_y": 0
+	},
+	"3":{
+		"type": "archer",
+		"coord_x": 1,
+		"coord_y": 1
+	}
+}
