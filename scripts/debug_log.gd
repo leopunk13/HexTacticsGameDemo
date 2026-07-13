@@ -55,6 +55,24 @@ static var debug_dict: Dictionary = {
 		"color": "cyan",
 		"type": "concat1"
 		},
+	"combat_info": {
+		"tmp": null, "old": null,
+		"message": "[ --- Combat Info--- ] ", 
+		"color": "purple",
+		"type": "concat1"
+		},
+	"attack": {
+		"tmp": null, "old": null,
+		"message": "[ --- Attack Info--- ] ", 
+		"color": "red",
+		"type": "concat1"
+		},
+	"hit_roll": {
+		"tmp": null, "old": null,
+		"message": "[ --- Hit Roll--- ] ", 
+		"color": "red",
+		"type": "concat1"
+		},
 }
 
 ## Enables or disables debug logging.

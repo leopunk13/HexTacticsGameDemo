@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://c8aoas11l7tfq" path="res://scenes/saber.tscn" id="3_o6xl0"]
 [ext_resource type="Script" uid="uid://ctyda40dhhtda" path="res://scripts/camera_controller.gd" id="5_tefeu"]
 [ext_resource type="Script" uid="uid://br6sqqwbeat2t" path="res://scripts/battle_manager.gd" id="6_tefeu"]
-[ext_resource type="PackedScene" uid="uid://bkei8nxldxqhq" path="res://scenes/enemy.tscn" id="8_tipki"]
 
 [node name="Main" type="Node" unique_id=1765558555]
 script = ExtResource("1_tbgi4")
@@ -31,12 +30,8 @@ script = ExtResource("5_tefeu")
 [node name="BattleManager" type="Node2D" parent="." unique_id=198267202]
 script = ExtResource("6_tefeu")
 
-[node name="Enemy" parent="." unique_id=1339383467 instance=ExtResource("8_tipki")]
-
 [editable path="Fighter"]
 [editable path="Fighter/Unit"]
 [editable path="Saber"]
 [editable path="Saber/Unit"]
 [editable path="GameWorld"]
-[editable path="Enemy"]
-[editable path="Enemy/Unit"]

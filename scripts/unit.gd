@@ -18,8 +18,10 @@ signal unit_died(unit: Unit)
 @onready var attack_area: Area2D = get_node_or_null("AttackArea")
 @onready var attack_collision: CollisionShape2D = get_node_or_null("AttackArea/AttackCollision")
 @onready var camera: Camera2D = get_node_or_null("Camera2D")
-# AnimatedSprite2D 挂在父节点 Player/Enemy 上，作为同级节点查找
+# AnimatedSprite2D 挂在父节点 Player 上，作为同级节点查找
 @onready var animated_sprite: AnimatedSprite2D = get_node_or_null("../AnimatedSprite2D")
+@onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
+@onready var mana_bar: ProgressBar = get_node_or_null("ManaBar")
 
 ## 队伍枚举
 enum Team { PLAYER, ENEMY }
@@ -32,7 +34,7 @@ enum Team { PLAYER, ENEMY }
 @export var move_speed: float = 200.0
 @export var move_range: float = 5.0
 @export var attack_damage: float = 25.0
-@export var attack_range: float = 6.0
+@export var attack_range: float = 1.0
 @export var attack_cooldown: float = 0.5
 @export var armor_class: float = 20.0
 ## 所属队伍
@@ -78,6 +80,8 @@ var _move_speed: float = 200.0
 
 ## 本回合是否已攻击
 var has_attacked: bool = false
+## 回合是否已经结束
+var is_turn_ended: bool = false
 
 var is_dead: bool = false
 var invincible_timer: float = 0.0
@@ -99,6 +103,10 @@ func _ready() -> void:
 	mana = max_mana
 	if attack_collision:
 		attack_collision.disabled = true
+	# 如果父节点是 Enemy，继承敌方队伍（子 Unit 的 _ready 先于父 Enemy._ready 执行，
+	# 此时 team 还是默认值 PLAYER，需要从父节点类型推断正确的队伍）
+	if get_parent() is Enemy:
+		team = Team.ENEMY
 	# 根据队伍添加到对应分组
 	# 仅当父节点是 Unit（即自身是 Fighter/Saber 容器内的子 Unit）时才加入分组
 	# 容器节点本身（Fighter/Saber，其父节点是 Main 等非 Unit）不加入分组，
@@ -111,10 +119,122 @@ func _ready() -> void:
 			add_to_group("enemy")
 	# 获取工具单例
 	utils = get_node_or_null("/root/Utils")
+	# 初始化血条/法力条显示
+	_setup_bars()
 	# 同步父节点（Player/Enemy）位置到地块中心
 	# 场景中 Player 的初始 position 是手动设置的偏移值，与 grid_coord 对应的
 	# 地块中心不一致，移动后会跳到正确位置造成视觉偏差
 	_sync_position_to_tile()
+
+## 初始化血条和法力条：设置颜色、范围、连接信号
+func _setup_bars() -> void:
+	# 血条颜色：友方绿色，敌方红色
+	var hp_color: Color = Color(0.2, 0.9, 0.2) if team == Team.PLAYER else Color(0.9, 0.2, 0.2)
+	# 法力条颜色：蓝色
+	var mp_color: Color = Color(0.2, 0.5, 1.0)
+	if health_bar:
+		# Control 节点在 Node2D 下时 offset 定位不自动生效，必须显式设置 position 和 size
+		health_bar.position = Vector2(-20, -35)
+		health_bar.size = Vector2(40, 6)
+		health_bar.max_value = max_health
+		health_bar.value = health
+		health_bar.show_percentage = false
+		# z_index 需高于 AnimatedSprite2D（z_index=2），否则被精灵遮挡
+		health_bar.z_index = 10
+		health_bar.z_as_relative = false
+		health_bar.visible = true
+		# 通过 StyleBoxOverride 设置填充颜色
+		var hp_style: StyleBoxFlat = StyleBoxFlat.new()
+		hp_style.bg_color = hp_color
+		hp_style.corner_radius_top_left = 2
+		hp_style.corner_radius_top_right = 2
+		hp_style.corner_radius_bottom_left = 2
+		hp_style.corner_radius_bottom_right = 2
+		health_bar.add_theme_stylebox_override("fill", hp_style)
+		# 背景设为深色
+		var hp_bg: StyleBoxFlat = StyleBoxFlat.new()
+		hp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.6)
+		hp_bg.corner_radius_top_left = 2
+		hp_bg.corner_radius_top_right = 2
+		hp_bg.corner_radius_bottom_left = 2
+		hp_bg.corner_radius_bottom_right = 2
+		health_bar.add_theme_stylebox_override("background", hp_bg)
+		# 连接信号更新血条
+		if not health_changed.is_connected(_on_health_changed):
+			health_changed.connect(_on_health_changed)
+	if mana_bar:
+		mana_bar.position = Vector2(-20, -28)
+		mana_bar.size = Vector2(40, 5)
+		mana_bar.max_value = max_mana
+		mana_bar.value = mana
+		mana_bar.show_percentage = false
+		mana_bar.z_index = 10
+		mana_bar.z_as_relative = false
+		mana_bar.visible = true
+		var mp_style: StyleBoxFlat = StyleBoxFlat.new()
+		mp_style.bg_color = mp_color
+		mp_style.corner_radius_top_left = 2
+		mp_style.corner_radius_top_right = 2
+		mp_style.corner_radius_bottom_left = 2
+		mp_style.corner_radius_bottom_right = 2
+		mana_bar.add_theme_stylebox_override("fill", mp_style)
+		var mp_bg: StyleBoxFlat = StyleBoxFlat.new()
+		mp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.6)
+		mp_bg.corner_radius_top_left = 2
+		mp_bg.corner_radius_top_right = 2
+		mp_bg.corner_radius_bottom_left = 2
+		mp_bg.corner_radius_bottom_right = 2
+		mana_bar.add_theme_stylebox_override("background", mp_bg)
+		if not mana_changed.is_connected(_on_mana_changed):
+			mana_changed.connect(_on_mana_changed)
+
+## 血量变化回调：更新血条
+func _on_health_changed(current: float, maximum: float) -> void:
+	if health_bar:
+		health_bar.max_value = maximum
+		health_bar.value = current
+
+## 法力变化回调：更新法力条
+func _on_mana_changed(current: float, maximum: float) -> void:
+	if mana_bar:
+		mana_bar.max_value = maximum
+		mana_bar.value = current
+
+## 伤害预览覆盖层（悬停攻击目标时显示在血条上，暗黄色标记预期伤害部分）
+var _damage_preview_overlay: ColorRect = null
+
+## 显示伤害预览：在血条上以暗黄色标记预期受到的伤害部分
+## 血条红色填充表示当前血量，暗黄色覆盖层标记将被扣除的部分，
+## 剩余红色即为预期血量
+func show_damage_preview(damage: float) -> void:
+	clear_damage_preview()
+	if health_bar == null or damage <= 0.0:
+		return
+	var overlay := ColorRect.new()
+	overlay.name = "DamagePreviewOverlay"
+	overlay.color = Color(0.8, 0.55, 0.1, 0.9)  # 暗黄色
+	# z_index 需高于 health_bar（z_index=10）才能覆盖在血条填充之上
+	overlay.z_index = 11
+	overlay.z_as_relative = false
+	# 伤害部分从"预期血量"位置开始，到"当前血量"位置结束
+	var bar_pos: Vector2 = health_bar.position
+	var bar_size: Vector2 = health_bar.size
+	var expected_hp: float = max(0.0, health - damage)
+	var expected_ratio: float = expected_hp / max_health
+	var damage_ratio: float = (health - expected_hp) / max_health
+	overlay.position = Vector2(
+		bar_pos.x + expected_ratio * bar_size.x,
+		bar_pos.y
+	)
+	overlay.size = Vector2(damage_ratio * bar_size.x, bar_size.y)
+	add_child(overlay)
+	_damage_preview_overlay = overlay
+
+## 清除伤害预览覆盖层
+func clear_damage_preview() -> void:
+	if _damage_preview_overlay != null and is_instance_valid(_damage_preview_overlay):
+		_damage_preview_overlay.queue_free()
+	_damage_preview_overlay = null
 
 ## 同步父节点（Player/Enemy）的全局位置到 grid_coord 对应的地块中心
 ## AnimatedSprite2D 的 position 偏移（如 (0,-11)）是视觉调整，使精灵
@@ -206,8 +326,10 @@ func _handle_movement() -> void:
 
 
 func _handle_input() -> void:
-	if Input.is_action_just_pressed("attack") and attack_timer <= 0 and not is_attacking:
-		perform_attack()
+	# 回合制模式下，攻击由 battle_manager -> attack(target) 处理
+	# 不再通过鼠标点击触发实时 perform_attack()，避免与回合制系统冲突
+	# （"attack" 输入动作映射为鼠标左键，会在所有单位上触发 perform_attack，
+	#   包括敌方单位，且 take_damage 调用参数数量错误会导致运行时错误）
 
 	for slot in range(1, 5):
 		if Input.is_action_just_pressed("skill_" + str(slot)):
@@ -244,8 +366,10 @@ func perform_attack() -> void:
 	if attack_area:
 		var bodies := attack_area.get_overlapping_bodies()
 		for body in bodies:
-			if body.is_in_group("enemy") and body.has_method("take_damage"):
-				body.take_damage(attack_damage, global_position)
+			# 根据攻击方队伍选择目标组：玩家攻击敌方，敌方攻击玩家
+			var target_group: String = "enemy" if team == Team.PLAYER else "player"
+			if body.is_in_group(target_group) and body.has_method("take_damage"):
+				body.take_damage(attack_damage)
 
 	await get_tree().create_timer(0.15).timeout
 	is_attacking = false
@@ -333,22 +457,147 @@ func remove_status_dodge_modifier(status_name: String) -> void:
 	status_dodge_modifiers.erase(status_name)
 
 ## 攻击目标（回合制）
-## 先进行命中判定，命中则造成伤害
+## 先播放攻击动画，动画期间或结束后进行命中判定，命中则造成伤害
 func attack(target: Unit) -> void:
 	if is_dead or target == null or target.is_dead:
 		return
 	has_attacked = true
+	# 朝向改由 battle_manager 在攻击结束后通过 SELECT_FACING 状态让玩家手动选择
+	# 播放攻击动画
+	play_attack_animation()
+	# 等待攻击动画播放一定时间后进行命中判定
+	await get_tree().create_timer(0.3).timeout
+	# 如果攻击者或目标在等待期间死亡，则取消
+	if is_dead or target == null or not is_instance_valid(target) or target.is_dead:
+		return
+	# ===== 战斗调试信息 =====
+	_log_combat_info(target)
 	# 命中判定
 	if not roll_hit(target):
 		# 未命中，显示 MISS
 		DebugLog.debug_nospam("attack", "攻击未命中！")
 		if utils:
-			utils.spawn_damage_number(get_parent(), 0, target.global_position, Color.GRAY)
+			_spawn_text_label(get_parent(), "MISS", target.global_position, Color.GRAY)
 		unit_attacked.emit(self, target)
+		# 攻击结束后切回 idle 动画
+		_play_idle_animation()
 		return
-	# 命中，造成伤害
+	# 命中，造成伤害（take_damage 内部会生成伤害数字和屏幕震动）
 	target.take_damage(attack_damage)
+	# 显示目标剩余血量比例
+	_spawn_remaining_hp_label(target)
 	unit_attacked.emit(self, target)
+	# 攻击结束后切回 idle 动画
+	_play_idle_animation()
+
+## 输出详细战斗信息（攻击力、防御、命中率、预期伤害等）
+func _log_combat_info(target: Unit) -> void:
+	var team_name: String = "玩家方" if team == Team.PLAYER else "敌方"
+	var target_team_name: String = "玩家方" if target.team == Team.PLAYER else "敌方"
+
+	# --- 攻击方命中值组成 ---
+	var base_hit: float = technique
+	var weapon_mod: float = weapon_hit_modifier
+	var prof_mod: float = proficiency_bonus if is_proficient else 0.0
+	var terrain_hit_mod: float = _get_terrain_hit_modifier()
+	var status_hit_mod: float = 0.0
+	for mod in status_hit_modifiers.values():
+		status_hit_mod += mod
+	var total_hit_value: float = calculate_hit_value()
+
+	# --- 防御方闪避值组成 ---
+	var base_dodge: float = target.agility
+	var armor_penalty: float = target.armor_dodge_penalty
+	var terrain_dodge_mod: float = target._get_terrain_dodge_modifier()
+	var status_dodge_mod: float = 0.0
+	for mod in target.status_dodge_modifiers.values():
+		status_dodge_mod += mod
+	var total_dodge_value: float = target.calculate_dodge_value()
+
+	# --- 最终命中率 ---
+	var hit_chance: float = calculate_hit_chance(target)
+
+	# --- 伤害信息 ---
+	# 当前伤害为固定值（无随机范围），最大值=最小值=attack_damage
+	var max_damage: float = attack_damage
+	var min_damage: float = attack_damage
+
+	# --- 预期伤害 = 命中率/100 * 伤害 ---
+	var expected_damage: float = hit_chance / 100.0 * attack_damage
+
+	DebugLog.debug_nospam("combat_info",
+		"\n========== 战斗信息 ==========\n" +
+		"攻击方: [%s] %s (HP:%.0f/%.0f)\n" % [team_name, unit_name, health, max_health] +
+		"被攻击方: [%s] %s (HP:%.0f/%.0f)\n" % [target_team_name, target.unit_name, target.health, target.max_health] +
+		"-------- 攻击方命中值 --------\n" +
+		"  基础命中(技巧): %.1f\n" % base_hit +
+		"  武器命中修正: %+.1f\n" % weapon_mod +
+		"  熟练加值: %+.1f%s\n" % [prof_mod, "(熟练)" if is_proficient else "(不熟练)"] +
+		"  地形命中修正: %+.1f\n" % terrain_hit_mod +
+		"  状态命中修正: %+.1f\n" % status_hit_mod +
+		"  命中值合计: %.1f\n" % total_hit_value +
+		"-------- 防御方闪避值 --------\n" +
+		"  基础闪避(敏捷): %.1f\n" % base_dodge +
+		"  护甲闪避惩罚: %+.1f\n" % armor_penalty +
+		"  地形闪避修正: %+.1f\n" % terrain_dodge_mod +
+		"  状态闪避修正: %+.1f\n" % status_dodge_mod +
+		"  闪避值合计: %.1f\n" % total_dodge_value +
+		"-------- 攻击参数 --------\n" +
+		"  攻击力: %.1f\n" % attack_damage +
+		"  攻击范围: %.0f\n" % attack_range +
+		"  被攻击方防御等级: %.1f\n" % target.armor_class +
+		"-------- 命中与伤害 --------\n" +
+		"  最终命中率: %.1f%% (限制在 %.0f%%~%.0f%%)\n" % [hit_chance, HIT_CHANCE_MIN, HIT_CHANCE_MAX] +
+		"  命中后伤害范围: %.1f ~ %.1f\n" % [min_damage, max_damage] +
+		"  预期伤害(命中率×伤害): %.1f\n" % expected_damage +
+		"================================="
+	)
+
+## 播放攻击动画
+func play_attack_animation() -> void:
+	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("attack"):
+		animated_sprite.play("attack")
+
+## 切回待机动画
+func _play_idle_animation() -> void:
+	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("idle"):
+		animated_sprite.play("idle")
+
+## 显示目标剩余血量比例标签（白色）
+func _spawn_remaining_hp_label(target: Unit) -> void:
+	if target == null or not is_instance_valid(target):
+		return
+	var remaining_ratio: int = int(round(target.health / target.max_health * 100.0))
+	var label := Label.new()
+	label.text = "HP %d%%" % remaining_ratio
+	label.add_theme_color_override("font_color", Color.WHITE)
+	label.add_theme_font_size_override("font_size", 14)
+	label.z_index = 100
+	label.position = target.global_position + Vector2(-20, -60)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 3)
+	get_parent().add_child(label)
+	# 渐隐消失
+	var tween := create_tween()
+	tween.tween_interval(1.0)
+	tween.tween_property(label, "modulate:a", 0.0, 0.8)
+	tween.tween_callback(label.queue_free)
+
+## 生成文本标签（用于显示 MISS 等文字）
+func _spawn_text_label(parent: Node, text: String, pos: Vector2, color: Color) -> void:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_font_size_override("font_size", 20)
+	label.z_index = 100
+	label.position = pos + Vector2(-15, -40)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 3)
+	parent.add_child(label)
+	var tween := parent.create_tween()
+	tween.tween_property(label, "position:y", label.position.y - 30, 0.8)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.8)
+	tween.tween_callback(label.queue_free)
 
 
 # ==================== 受伤与死亡 ====================
@@ -384,6 +633,11 @@ func _die() -> void:
 	is_dead = true
 	velocity = Vector2.ZERO
 	player_died.emit()
+	unit_died.emit(self)
+
+	# 仅在友方单位死亡时显示"YOU DIED"画面，敌方单位死亡不显示
+	if team != Team.PLAYER:
+		return
 
 	# 死亡画面
 	var overlay := ColorRect.new()
@@ -596,7 +850,7 @@ func heal(amount: float) -> void:
 	
 ## 是否可以行动
 func can_act() -> bool:
-	return not is_dead and (not has_moved or not has_attacked)
+	return not is_dead and not is_turn_ended and (not has_moved or not has_attacked)
 
 ## 根据轴向坐标偏移设置朝向（共6个方向）
 ## diff 为目标地块与当前地块的轴向坐标差

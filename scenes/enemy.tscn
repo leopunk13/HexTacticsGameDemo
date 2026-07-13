@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bn6pupd45g3x4" path="res://scripts/enemy.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://qvxjxh4ihegg" path="res://assets/A-full-body-2D-game-character-sprite-using-uploaded-picture,.png" id="2_md0e3"]
+[ext_resource type="PackedScene" uid="uid://cyp57a6rlv5fd" path="res://scenes/unit.tscn" id="3_4ra3w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_md0e3"]
 atlas = ExtResource("2_md0e3")
@@ -62,7 +63,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 5.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -85,26 +86,15 @@ collision_mask = 17
 script = ExtResource("1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1785382781]
-scale = Vector2(2, 2)
+scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_5uy6h")
-animation = &"idle"
+animation = &"attack"
 autoplay = "idle"
+frame_progress = 0.56803846
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=811955344]
+[node name="Unit" parent="." unique_id=98471305 instance=ExtResource("3_4ra3w")]
 
-[node name="EnemyLight" type="PointLight2D" parent="." unique_id=578858591]
-color = Color(0.8, 0.2, 0.1, 1)
-energy = 0.5
-height = 10.0
+[node name="CollisionShape2D" parent="Unit" index="0" unique_id=1104090654]
+visible = false
 
-[node name="HealthBar" type="ProgressBar" parent="." unique_id=323468741]
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
-offset_bottom = -35.0
-value = 100.0
-show_percentage = false
-
-[node name="DetectionArea" type="Area2D" parent="." unique_id=714029150]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1650162113]
+[editable path="Unit"]

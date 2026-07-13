@@ -164,3 +164,7 @@ WASD - 移动 | 鼠标左键 - 攻击
 
 [node name="GameMenu" parent="." unique_id=1193393698 instance=ExtResource("2_oo0fn")]
 unique_name_in_owner = true
+
+[node name="MessageLabel" type="Label" parent="." unique_id=1202735703]
+offset_right = 40.0
+offset_bottom = 23.0

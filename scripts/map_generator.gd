@@ -41,6 +41,8 @@ func _ready() -> void:
 			var terrain_res := load(terrain_res_path)
 			terrain_dict[index].append(terrain_res)
 	generate_map_from_file(map_file_path)
+	# 地图生成完毕后恢复随机种子，避免战斗中的命中判定等也变成确定性序列
+	randomize()
 
 
 func generate_map_from_file(file_path):

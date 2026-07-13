@@ -1,3 +1,4 @@
+Label
 CanvasLayer
 ColorRect
 CharacterBody2D
@@ -5,7 +6,6 @@ Node2D
 AnimatedSprite2D
 Button
 VBoxContainer
-Label
 ScrollContainer
 Panel
 GridContainer

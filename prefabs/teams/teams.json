@@ -1,22 +1,22 @@
 {
 	"0":{
 		"type": "fighter",
-		"coord_x": 0,
-		"coord_y": 0
+		"coord_x": -6,
+		"coord_y": -3
 	},
 	"1":{
 		"type": "saber",
-		"coord_x": 0,
-		"coord_y": 1
+		"coord_x": -6,
+		"coord_y": -2
 	},
 	"2":{
 		"type": "lancer",
-		"coord_x": 1,
-		"coord_y": 0
+		"coord_x": -5,
+		"coord_y": -3
 	},
 	"3":{
 		"type": "archer",
-		"coord_x": 1,
-		"coord_y": 1
+		"coord_x": -5,
+		"coord_y": -2
 	}
 }

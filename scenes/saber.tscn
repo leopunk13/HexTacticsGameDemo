@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://df2dlvh3lbdn5"]
+[gd_scene format=3 uid="uid://c8aoas11l7tfq"]
 
-[ext_resource type="Script" uid="uid://d0b8n7vxo5ien" path="res://scripts/archer.gd" id="1_orquw"]
+[ext_resource type="Script" uid="uid://dui3qqpd4gfyp" path="res://scripts/archer.gd" id="1_orquw"]
 [ext_resource type="Texture2D" uid="uid://bv0kfcdbfr83i" path="res://assets/BUSHI vol.1/Character_animations_no_background.png" id="2_orquw"]
 [ext_resource type="PackedScene" uid="uid://cyp57a6rlv5fd" path="res://scenes/unit.tscn" id="3_qhqgy"]
 
@@ -160,7 +160,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Archer" type="CharacterBody2D" unique_id=806694034]
+[node name="Saber" type="CharacterBody2D" unique_id=806694034]
 script = ExtResource("1_orquw")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1056561178]
@@ -168,20 +168,17 @@ z_index = 2
 texture_filter = 3
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_a38lo")
-animation = &"run"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="Unit" parent="." unique_id=98471305 instance=ExtResource("3_qhqgy")]
 
-[node name="CollisionShape2D" parent="Unit" index="0" unique_id=1104090654]
-position = Vector2(-90, 0)
-
 [node name="HealthBar" parent="Unit" index="3" unique_id=1017428993]
-offset_left = -110.0
-offset_right = -70.0
+offset_top = -37.0
+offset_bottom = -31.0
 
 [node name="ManaBar" parent="Unit" index="4" unique_id=252730495]
-offset_left = -110.0
-offset_right = -70.0
+offset_top = -30.0
+offset_bottom = -25.0
 
 [editable path="Unit"]

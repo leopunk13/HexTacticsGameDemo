@@ -12,3 +12,11 @@ res://scripts/hex_grid.gd
 res://scripts/hex_utils.gd
 res://scripts/map_generator.gd
 res://prefabs/terrains/terrains.json
+res://scenes/saber.tscn
+res://scripts/archer.gd
+res://scenes/enemy.tscn
+res://scripts/enemy.gd
+res://scenes/unit.tscn
+res://scripts/debug_log.gd
+res://scenes/hud.tscn
+res://scripts/hud.gd

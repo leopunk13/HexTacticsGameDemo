@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var controls: RichTextLabel = $Controls
 @onready var game_menu: Control = %GameMenu
 @onready var bottom_panel: Panel = $BottomPanel
+@onready var message_label: Label = $MessageLabel
 
 
 var unit_info_panel: PanelContainer
@@ -64,6 +65,13 @@ func _ready() -> void:
 	## 等待场景就绪后绑定玩家
 	#await get_tree().process_frame
 	#_bind_player()
+	
+	message_label.name = "MessageLabel"
+	message_label.set_anchors_preset(Control.PRESET_CENTER)
+	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message_label.add_theme_font_size_override("font_size", 24)
+	message_label.add_theme_color_override("font_color", Color(1, 1, 0.5))
+	message_label.visible = false
 
 
 func show_skill_bar() -> void:
@@ -168,3 +176,14 @@ func _on_skill_used(slot: int) -> void:
 	var tween := create_tween()
 	tween.tween_property(flash, "color:a", 0.0, 0.3)
 	tween.tween_callback(flash.queue_free)
+	
+## 显示中央消息
+func show_message(text: String, duration: float = 1.5) -> void:
+	message_label.text = text
+	message_label.visible = true
+	message_label.modulate = Color.WHITE
+	# 淡出动画
+	var tween: Tween = create_tween()
+	tween.tween_interval(duration)
+	tween.tween_property(message_label, "modulate", Color.TRANSPARENT, 0.5)
+	tween.tween_callback(func(): message_label.visible = false)
