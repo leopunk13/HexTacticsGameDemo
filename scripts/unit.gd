@@ -236,6 +236,80 @@ func clear_damage_preview() -> void:
 		_damage_preview_overlay.queue_free()
 	_damage_preview_overlay = null
 
+
+## ==================== 朝向指示器 ====================
+## 每个单位持续显示的朝向指示器（带箭头的圆环）
+var _facing_indicator: Node2D = null
+## 友方朝向指示器颜色（与移动范围颜色一致：蓝色）
+const FACING_COLOR_PLAYER: Color = Color(0.2, 0.6, 1.0, 0.5)
+## 敌方朝向指示器颜色（与攻击范围颜色一致：红色）
+const FACING_COLOR_ENEMY: Color = Color(1.0, 0.2, 0.2, 0.5)
+
+## 创建朝向指示器（若已存在则先清除）
+func create_facing_indicator() -> void:
+	clear_facing_indicator()
+	var indicator: Node2D = Node2D.new()
+	indicator.name = "FacingIndicator"
+	# 圆环
+	var ring: Polygon2D = Polygon2D.new()
+	var ring_radius: float = 28.0
+	var seg_count: int = 24
+	var ring_points: PackedVector2Array = _arc(ring_radius * 0.6, ring_radius * 0.7, seg_count)
+	ring.polygon = ring_points
+	ring.color = _get_facing_color()
+	ring.z_index = 2
+	indicator.add_child(ring)
+	# 箭头（三角形），指向 facing_direction
+	var arrow: Polygon2D = Polygon2D.new()
+	var arrow_points: PackedVector2Array = PackedVector2Array()
+	var arrow_dist: float = ring_radius * 0.85
+	var arrow_size: float = 5.0
+	arrow_points.append(Vector2(arrow_dist + arrow_size, 0))   # 尖端
+	arrow_points.append(Vector2(arrow_dist - arrow_size, -arrow_size)) # 左下
+	arrow_points.append(Vector2(arrow_dist - arrow_size, arrow_size))  # 右下
+	arrow.polygon = arrow_points
+	arrow.color = _get_facing_color()
+	arrow.z_index = 3
+	indicator.add_child(arrow)
+	# 根据朝向旋转指示器
+	indicator.rotation = _facing_angle_from_direction(facing_direction)
+	# 挂载到单位父节点（Player/Enemy）下方，跟随移动
+	var attach_to: Node2D = get_parent() if get_parent() is Node2D else self
+	attach_to.add_child(indicator)
+	_facing_indicator = indicator
+
+## 清除朝向指示器
+func clear_facing_indicator() -> void:
+	if _facing_indicator != null and is_instance_valid(_facing_indicator):
+		_facing_indicator.queue_free()
+	_facing_indicator = null
+
+## 更新朝向指示器旋转（朝向改变后调用）
+func update_facing_indicator_rotation() -> void:
+	if _facing_indicator != null and is_instance_valid(_facing_indicator):
+		_facing_indicator.rotation = _facing_angle_from_direction(facing_direction)
+
+## 根据队伍获取朝向指示器颜色
+func _get_facing_color() -> Color:
+	return FACING_COLOR_PLAYER if team == Team.PLAYER else FACING_COLOR_ENEMY
+
+## 由 facing_direction 计算旋转角度（弧度）
+static func _facing_angle_from_direction(dir: Vector2) -> float:
+	if dir == Vector2.ZERO:
+		return 0.0
+	return dir.angle()
+
+## 生成圆弧点集（用于圆环 Polygon2D）
+static func _arc(inner_radius: float, outer_radius: float, segments: int) -> PackedVector2Array:
+	var points: PackedVector2Array = PackedVector2Array()
+	for i in range(segments):
+		var angle: float = TAU * float(i) / float(segments)
+		points.append(Vector2(cos(angle) * outer_radius, sin(angle) * outer_radius))
+	for i in range(segments):
+		var angle: float = TAU * float(segments - 1 - i) / float(segments)
+		points.append(Vector2(cos(angle) * inner_radius, sin(angle) * inner_radius))
+	return points
+
 ## 同步父节点（Player/Enemy）的全局位置到 grid_coord 对应的地块中心
 ## AnimatedSprite2D 的 position 偏移（如 (0,-11)）是视觉调整，使精灵
 ## 看起来"站在"地块上，不需要补偿——移动时也使用同样的地块中心坐标
@@ -286,8 +360,12 @@ func reset_to_initial_state() -> void:
 	if animated_sprite and animated_sprite.sprite_frames:
 		if animated_sprite.sprite_frames.has_animation("idle"):
 			animated_sprite.play("idle")
+	# 同步精灵图朝向（重置 flip_h）
+	_update_sprite_flip(facing_direction)
 	# 清除伤害预览覆盖层（若存在）
 	clear_damage_preview()
+	# 清除旧的朝向指示器（将在战斗初始化时重新创建）
+	clear_facing_indicator()
 
 
 ## 设置单位属性
@@ -914,6 +992,8 @@ func set_facing_from_coord(diff: Vector2i) -> void:
 		facing_direction = target_pixel.normalized()
 	# 根据朝向更新 idle 动画方向
 	_update_sprite_flip(facing_direction)
+	# 更新朝向指示器旋转
+	update_facing_indicator_rotation()
 	DebugLog.debug_nospam("update_visual", "朝向已设置: %s" % str(facing_direction))
 
 ## 根据方向向量更新精灵水平翻转

@@ -53,9 +53,6 @@ var _debug_move_tile_center: Vector2 = Vector2.ZERO
 ## 调试用：记录本次移动点击地块的轴向坐标
 var _debug_move_axial: Vector2i = Vector2i.ZERO
 
-## 选中单位时显示的朝向指示器（带箭头的圆环）
-var _facing_indicator: Node2D = null
-
 ## 警告提示音播放器（目标地块被已行动完毕的友军占据时播放）
 var _warn_player: AudioStreamPlayer = null
 const WARN_SOUND_PATH: String = "res://assets/sounds/warn.wav"
@@ -90,53 +87,69 @@ func setup_battle(cam: CameraController, hud_node: CanvasLayer) -> void:
 		push_warning("警告音文件不存在: %s，请放置该文件后重启" % WARN_SOUND_PATH)
 	# 注册场景中的玩家单位到战斗管理器与地块
 	_register_units()
+	# 为所有单位创建朝向指示器（默认朝向最近的敌人）
+	_create_all_facing_indicators()
 
 ## 播放警告提示音
 func _play_warn_sound() -> void:
 	if _warn_player and _warn_player.stream:
 		_warn_player.play()
 
-## 在选中单位下方创建带箭头的圆环，箭头指向 facing_direction
-func _create_facing_indicator(unit: Unit) -> void:
-	_clear_facing_indicator()
-	var indicator: Node2D = Node2D.new()
-	indicator.name = "FacingIndicator"
-	# 圆环
-	var ring: Polygon2D = Polygon2D.new()
-	var ring_radius: float = 28.0
-	var seg_count: int = 24
-	var ring_points: PackedVector2Array = arc(ring_radius*0.6,ring_radius*0.7,seg_count)
+## 为所有单位创建朝向指示器，并设置默认朝向（指向最近的敌人）
+func _create_all_facing_indicators() -> void:
+	# 友方单位朝向最近的敌方单位
+	for unit in player_units:
+		if unit == null or not is_instance_valid(unit) or unit.is_dead:
+			continue
+		_set_default_facing_to_nearest_enemy(unit)
+		unit.create_facing_indicator()
+	# 敌方单位朝向最近的友方单位
+	for unit in enemy_units:
+		if unit == null or not is_instance_valid(unit) or unit.is_dead:
+			continue
+		_set_default_facing_to_nearest_player(unit)
+		unit.create_facing_indicator()
 
-	ring.polygon = ring_points
-	ring.color = Color(1.0, 1.0, 0.2, 0.3)
-	ring.z_index = 2
-	indicator.add_child(ring)
-	# 箭头（三角形），指向 facing_direction
-	var arrow: Polygon2D = Polygon2D.new()
-	var arrow_points: PackedVector2Array = PackedVector2Array()
-	var arrow_dist: float = ring_radius*0.85
-	var arrow_size: float = 5.0
-	# 箭头朝向 facing_direction（默认朝右）
-	arrow_points.append(Vector2(arrow_dist + arrow_size, 0))   # 尖端
-	arrow_points.append(Vector2(arrow_dist - arrow_size, -arrow_size)) # 左下
-	arrow_points.append(Vector2(arrow_dist - arrow_size, arrow_size))  # 右下
-	arrow.polygon = arrow_points
-	arrow.color = Color(1.0, 1.0, 0.2, 0.3)
-	arrow.z_index = 3
-	indicator.add_child(arrow)
-	# 根据朝向旋转指示器
-	var angle: float = facing_angle_from_direction(unit.facing_direction)
-	indicator.rotation = angle
-	# 挂载到单位父节点（Player/Enemy）下方，跟随移动
-	var attach_to: Node2D = unit.get_parent() if unit.get_parent() is Node2D else unit
-	attach_to.add_child(indicator)
-	_facing_indicator = indicator
+## 清除所有单位的朝向指示器
+func _clear_all_facing_indicators() -> void:
+	for unit in player_units + enemy_units:
+		if unit != null and is_instance_valid(unit):
+			unit.clear_facing_indicator()
 
-## 清除朝向指示器
-func _clear_facing_indicator() -> void:
-	if _facing_indicator != null and is_instance_valid(_facing_indicator):
-		_facing_indicator.queue_free()
-	_facing_indicator = null
+## 设置友方单位默认朝向最近的敌方单位
+func _set_default_facing_to_nearest_enemy(unit: Unit) -> void:
+	var nearest: Unit = _find_nearest_enemy_unit(unit.grid_coord)
+	if nearest == null:
+		return
+	var diff: Vector2i = nearest.grid_coord - unit.grid_coord
+	var target_pixel: Vector2 = HexUtils.axial_to_pixel(diff.x, diff.y)
+	if target_pixel != Vector2.ZERO:
+		unit.facing_direction = target_pixel.normalized()
+		unit._update_sprite_flip(unit.facing_direction)
+
+## 设置敌方单位默认朝向最近的友方单位
+func _set_default_facing_to_nearest_player(unit: Unit) -> void:
+	var nearest: Unit = _find_nearest_player_unit(unit.grid_coord)
+	if nearest == null:
+		return
+	var diff: Vector2i = nearest.grid_coord - unit.grid_coord
+	var target_pixel: Vector2 = HexUtils.axial_to_pixel(diff.x, diff.y)
+	if target_pixel != Vector2.ZERO:
+		unit.facing_direction = target_pixel.normalized()
+		unit._update_sprite_flip(unit.facing_direction)
+
+## 查找距离指定坐标最近的敌方单位（用于友方朝向）
+func _find_nearest_enemy_unit(start: Vector2i) -> Unit:
+	var nearest: Unit = null
+	var min_dist: int = 999999
+	for enemy in enemy_units:
+		if enemy == null or not is_instance_valid(enemy) or enemy.is_dead:
+			continue
+		var d: int = HexUtils.hex_distance(start, enemy.grid_coord)
+		if d < min_dist:
+			min_dist = d
+			nearest = enemy
+	return nearest
 
 ## 由 facing_direction (Vector2) 计算旋转角度（弧度）
 ## facing_direction 默认朝右 (1,0) 对应 0 弧度
@@ -229,11 +242,10 @@ func _handle_select_unit(tile: HexTile) -> void:
 	if tile.is_occupied() and tile.occupying_unit.team == Unit.Team.PLAYER and tile.occupying_unit.can_act():
 		selected_unit = tile.occupying_unit
 		unit_selected.emit(selected_unit)
-		
+
 		HexGrids.clear_highlights()
-		# 在选中单位下方显示朝向指示器（带箭头的圆环）
-		_create_facing_indicator(selected_unit)
-		
+		# 选中单位的朝向指示器已持续显示，无需重新创建
+
 		# 显示移动范围
 		if not selected_unit.has_moved:
 			HexGrids.highlight_move_range(selected_unit.grid_coord, selected_unit.move_range)
@@ -512,9 +524,7 @@ func _set_state(new_state: int) -> void:
 	# 仅在回到 SELECT_UNIT 等非选择状态时清除，以便重新选择
 	if state not in [BattleState.SELECT_MOVE, BattleState.SELECT_ATTACK, BattleState.SELECT_FACING]:
 		selected_unit = null
-	# 离开选中/朝向状态时清除朝向指示器
-	if state != BattleState.SELECT_UNIT and state != BattleState.SELECT_FACING and state != BattleState.SELECT_MOVE:
-		_clear_facing_indicator()
+	# 朝向指示器现在持续显示，切换状态时不清除
 	reachable_tiles.clear()
 	attackable_coords.clear()
 
@@ -650,8 +660,7 @@ func _show_facing_options(unit: Unit) -> void:
 	var current_tile: HexTile = HexGrids.get_tile(unit.grid_coord)
 	if current_tile:
 		current_tile.highlight_type = HexTile.HighlightType.SELECTED
-		# 在选中单位下方显示朝向指示器（带箭头的圆环）
-		_create_facing_indicator(unit)
+		# 朝向指示器已持续显示，无需重新创建
 		unit._sync_position_to_tile()
 	# 高亮6个相邻方向供玩家点击选择朝向（白色）
 	for dir in HexUtils.HEX_DIRECTIONS:
@@ -727,9 +736,7 @@ func _handle_select_facing(tile: HexTile) -> void:
 		selected_unit.set_facing_from_coord(diff)
 		# 选中地块闪烁
 		_flash_selected_facing_tile(clicked_coord)
-		# 更新朝向指示器旋转
-		if _facing_indicator != null and is_instance_valid(_facing_indicator):
-			_facing_indicator.rotation = facing_angle_from_direction(selected_unit.facing_direction)
+		# 更新朝向指示器旋转（set_facing_from_coord 内部已调用 update_facing_indicator_rotation）
 	_finish_facing(end_turn)
 
 ## 朝向选择完成后的收尾工作
@@ -749,7 +756,7 @@ func _finish_facing(end_turn: bool) -> void:
 ## 若没有可行动单位，回到 SELECT_UNIT 状态（会自动检测是否进入敌方回合）
 func _switch_to_next_player_unit() -> void:
 	HexGrids.clear_highlights()
-	_clear_facing_indicator()
+	# 朝向指示器持续显示，切换单位时不清除
 	# 清除当前选中，避免误用
 	selected_unit = null
 	# 寻找下一个可行动的玩家单位
@@ -773,6 +780,8 @@ func _on_unit_unit_died(unit: Unit) -> void:
 	# 从单位列表中移除死亡单位
 	player_units.erase(unit)
 	enemy_units.erase(unit)
+	# 清除死亡单位的朝向指示器
+	unit.clear_facing_indicator()
 	# 清除地块上的占据单位
 	if HexGrids.get_tile(unit.grid_coord) != null:
 		var tile: HexTile = HexGrids.get_tile(unit.grid_coord)
@@ -966,7 +975,14 @@ func get_current_state() -> Dictionary:
 func restore_from_save_data(save_data: SaveData) -> void:
 	# 清除当前状态
 	HexGrids.clear_highlights()
-	_clear_facing_indicator()
+	# 重置异步操作状态（角色死亡时可能处于攻击/移动中，这些变量未清理）
+	_is_processing_action = false
+	_end_turn_after_facing = false
+	_pending_attack_target = null
+	_current_enemy = null
+	_enemy_ai_queue.clear()
+	# 清除所有单位的朝向指示器（稍后重新创建）
+	_clear_all_facing_indicators()
 	# 清除所有地块上的单位占据
 	for unit in player_units + enemy_units:
 		if unit != null and is_instance_valid(unit):
@@ -999,6 +1015,10 @@ func restore_from_save_data(save_data: SaveData) -> void:
 	# 仅在 hud 存在 update_turn 方法时调用（该方法可能未实现）
 	if hud and hud.has_method("update_turn"):
 		hud.update_turn(turn_count, "PLAYER")
+	# 为所有单位重新创建朝向指示器（使用存档中的朝向）
+	for unit in player_units + enemy_units:
+		if unit != null and is_instance_valid(unit) and not unit.is_dead:
+			unit.create_facing_indicator()
 
 ## 从存档数据恢复单位列表
 func _restore_units(units_data: Array, team: Unit.Team, target_list: Array) -> void:
@@ -1048,6 +1068,8 @@ func _restore_units(units_data: Array, team: Unit.Team, target_list: Array) -> v
 		else:
 			if unit.animated_sprite and unit.animated_sprite.sprite_frames and unit.animated_sprite.sprite_frames.has_animation("idle"):
 				unit.animated_sprite.play("idle")
+			# 同步精灵图朝向（根据存档的 facing_direction 更新 flip_h）
+			unit._update_sprite_flip(unit.facing_direction)
 		# 添加到列表
 		target_list.append(unit)
 		# 重新连接死亡信号

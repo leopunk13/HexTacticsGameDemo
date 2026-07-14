@@ -33,6 +33,7 @@ signal continue_game_requested
 @onready var load_btn: Button = $MainMenu/ResumeContainer/LoadBtn
 @onready var retry_battle_btn: Button = $MainMenu/ResumeContainer/RetryBattleBtn
 @onready var main_menu_btn: Button = $MainMenu/ResumeContainer/MainMenuBtn
+@onready var resume_quit_btn: Button = $MainMenu/ResumeContainer/QuitBtn
 @onready var continue_game_btn: Button = $MainMenu/ContinueContainer/ContinueGameBtn
 
 ## 当前模式：SAVE 或 LOAD，决定点击 SaveSlot 时的行为
@@ -61,6 +62,7 @@ func _ready() -> void:
 	resume_game_btn.pressed.connect(_on_resume_pressed)
 	retry_battle_btn.pressed.connect(_on_retry_battle_pressed)
 	main_menu_btn.pressed.connect(_on_main_menu_pressed)
+	resume_quit_btn.pressed.connect(_on_quit_pressed)
 	continue_game_btn.pressed.connect(_on_continue_game_pressed)
 	# 2.收集 SaveSlot 节点并连接 pressed 信号
 	_collect_save_slots()
