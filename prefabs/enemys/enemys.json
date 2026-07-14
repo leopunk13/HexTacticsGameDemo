@@ -1,0 +1,22 @@
+{
+	"0":{
+		"type": "enemy1",
+		"coord_x": 6,
+		"coord_y": -3
+	},
+	"1":{
+		"type": "enemy2",
+		"coord_x": 6,
+		"coord_y": -2
+	},
+	"2":{
+		"type": "enemy3",
+		"coord_x": 5,
+		"coord_y": -3
+	},
+	"3":{
+		"type": "enemy4",
+		"coord_x": 5,
+		"coord_y": -2
+	}
+}

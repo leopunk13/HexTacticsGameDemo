@@ -246,6 +246,50 @@ func _sync_position_to_tile() -> void:
 	move_node.global_position = tile_center
 
 
+## 重置单位到初始状态（开始新游戏或重试战斗时调用）
+func reset_to_initial_state() -> void:
+	# 恢复血量与法力
+	health = max_health
+	mana = max_mana
+	# 重置回合状态
+	has_moved = false
+	has_attacked = false
+	is_turn_ended = false
+	# 重置攻击/移动状态
+	is_attacking = false
+	attack_timer = 0.0
+	_is_moving = false
+	_move_path.clear()
+	_move_index = 0
+	# 重置朝向
+	facing_direction = Vector2.RIGHT
+	# 重置死亡状态
+	is_dead = false
+	invincible_timer = 0.0
+	# 重置等级与经验
+	level = 1
+	exp_points = 0
+	# 恢复父节点可见性
+	var parent_node: Node2D = get_parent() as Node2D
+	if parent_node:
+		parent_node.visible = true
+	# 同步血条显示
+	if health_bar:
+		health_bar.max_value = max_health
+		health_bar.value = health
+		health_bar.visible = true
+	# 同步法力条显示
+	if mana_bar:
+		mana_bar.max_value = max_mana
+		mana_bar.value = mana
+	# 恢复 idle 动画
+	if animated_sprite and animated_sprite.sprite_frames:
+		if animated_sprite.sprite_frames.has_animation("idle"):
+			animated_sprite.play("idle")
+	# 清除伤害预览覆盖层（若存在）
+	clear_damage_preview()
+
+
 ## 设置单位属性
 func setup(data: Dictionary) -> void:
 	unit_name = data.get("name", unit_name)
@@ -563,6 +607,38 @@ func _play_idle_animation() -> void:
 	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("idle"):
 		animated_sprite.play("idle")
 
+## 播放死亡动画，动画结束后释放占据地块并从场景中消失
+## 友方单位（Fighter/Saber/Archer）拥有 death 动画；
+## 敌方单位无 death 动画，直接释放地块并隐藏节点
+func _play_death_animation() -> void:
+	var has_death: bool = animated_sprite != null and animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation("death")
+	if has_death:
+		# 死亡动画必须为非循环，否则 animation_finished 信号永远不会触发
+		animated_sprite.sprite_frames.set_animation_loop("death", false)
+		# 断开可能存在的 animation_finished 连接，避免重复连接
+		if animated_sprite.animation_finished.is_connected(_on_death_animation_finished):
+			animated_sprite.animation_finished.disconnect(_on_death_animation_finished)
+		animated_sprite.animation_finished.connect(_on_death_animation_finished, CONNECT_ONE_SHOT)
+		animated_sprite.play("death")
+	else:
+		# 无 death 动画（敌方单位），直接释放地块并隐藏节点
+		_release_tile_and_hide()
+
+## 死亡动画播放完毕回调：释放地块并隐藏节点
+func _on_death_animation_finished() -> void:
+	_release_tile_and_hide()
+
+## 释放死亡单位占据的地块，并从场景中消失（隐藏父节点）
+func _release_tile_and_hide() -> void:
+	# 释放占据的地块
+	var tile: HexTile = HexGrids.get_tile(grid_coord)
+	if tile != null and tile.occupying_unit == self:
+		tile.occupying_unit = null
+	# 从场景中消失：隐藏父节点（Player/Enemy 容器）
+	var parent_node: Node = get_parent()
+	if parent_node is Node2D:
+		(parent_node as Node2D).visible = false
+
 ## 显示目标剩余血量比例标签（白色）
 func _spawn_remaining_hp_label(target: Unit) -> void:
 	if target == null or not is_instance_valid(target):
@@ -635,32 +711,9 @@ func _die() -> void:
 	player_died.emit()
 	unit_died.emit(self)
 
-	# 仅在友方单位死亡时显示"YOU DIED"画面，敌方单位死亡不显示
-	if team != Team.PLAYER:
-		return
-
-	# 死亡画面
-	var overlay := ColorRect.new()
-	overlay.size = Vector2(1280, 720)
-	overlay.color = Color(0, 0, 0, 0)
-	overlay.z_index = 1000
-	get_parent().add_child(overlay)
-
-	var tween := create_tween()
-	tween.tween_property(overlay, "color:a", 0.8, 2.0)
-
-	var label := Label.new()
-	label.text = "YOU DIED"
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_color_override("font_color", Color(0.8, 0.1, 0.1))
-	label.add_theme_font_size_override("font_size", 72)
-	label.position = Vector2(440, 300)
-	label.z_index = 1001
-	label.modulate.a = 0.0
-	get_parent().add_child(label)
-
-	var label_tween := create_tween()
-	label_tween.tween_property(label, "modulate:a", 1.0, 2.0)
+	# 播放死亡动画（友方单位有 death 动画）
+	# 动画播放完毕后释放地块并从场景中消失
+	_play_death_animation()
 
 
 # ==================== 技能系统 ====================

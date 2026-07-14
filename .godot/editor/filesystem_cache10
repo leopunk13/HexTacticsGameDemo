@@ -1,5 +1,5 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1783416093
+::res://::1783626622
 README.md::TextFile::-1::1782159565::0::1::::<><><>0<>0<><>::
 ::res://assets/::1783594132
 A-full-body-2D-game-character-sprite-using-uploaded-picture,.png::CompressedTexture2D::1167787214201828346::1782159566::1782160424::1::::<><><>0<>0<>b5185ed8da89ba85e827769e0e28fa1f<>res://.godot/imported/A-full-body-2D-game-character-sprite-using-uploaded-picture,.png-47330c77142772b432add851625f5885.ctex::
@@ -948,15 +948,15 @@ ZombieRed.PNG::CompressedTexture2D::6527237602093920188::1782159566::1782160424:
 ::res://assets/fonts/::1782385871
 _bitmap_font____romulus_by_pix3m-d6aokem.ttf::FontFile::4305938542972591956::1779991550::1782385871::1::::<><><>0<>0<>c6eb998ae6b2163a9a177fd43ab5a1f5<>res://.godot/imported/_bitmap_font____romulus_by_pix3m-d6aokem.ttf-3301b33bca91150ddb1d9f1d7466a304.fontdata::
 alagard_by_pix3m-d6awiwp.ttf::FontFile::2335580131728730046::1779987980::1782385871::1::::<><><>0<>0<>ee1d694182f00e11a4d60cd5cdbcdcc3<>res://.godot/imported/alagard_by_pix3m-d6awiwp.ttf-06715f38d68b61052ff99f0b95ce2df3.fontdata::
-::res://assets/languages/::1782387652
-localization.csv::Translation::4412671619366570983::1782387460::1782387652::1::::<><><>0<>0<>eb097d33f5cd113d9cee31f56e4b98ee<>res://assets/languages/localization.en.translation<*>res://assets/languages/localization.zh.translation<*>res://assets/languages/localization.yue.translation<*>res://assets/languages/localization.ko.translation<*>res://assets/languages/localization.ja.translation<*>res://assets/languages/localization.es.translation<*>res://assets/languages/localization.fr.translation::
-localization.en.translation::OptimizedTranslation::7386257029474715161::1782387652::0::1::::<><><>0<>0<><>::
-localization.es.translation::OptimizedTranslation::1497095117351034003::1782387652::0::1::::<><><>0<>0<><>::
-localization.fr.translation::OptimizedTranslation::7284360107541244805::1782387652::0::1::::<><><>0<>0<><>::
-localization.ja.translation::OptimizedTranslation::6253307308014681770::1782387652::0::1::::<><><>0<>0<><>::
-localization.ko.translation::OptimizedTranslation::4222757965853295806::1782387652::0::1::::<><><>0<>0<><>::
-localization.yue.translation::OptimizedTranslation::4103320974522564447::1782387652::0::1::::<><><>0<>0<><>::
-localization.zh.translation::OptimizedTranslation::67681520476624304::1782387652::0::1::::<><><>0<>0<><>::
+::res://assets/languages/::1784059219
+localization.csv::Translation::4412671619366570983::1784059482::1784059528::1::::<><><>0<>0<>eb097d33f5cd113d9cee31f56e4b98ee<>res://assets/languages/localization.en.translation<*>res://assets/languages/localization.zh.translation<*>res://assets/languages/localization.yue.translation<*>res://assets/languages/localization.ko.translation<*>res://assets/languages/localization.ja.translation<*>res://assets/languages/localization.es.translation<*>res://assets/languages/localization.fr.translation::
+localization.en.translation::OptimizedTranslation::7386257029474715161::1784059528::0::1::::<><><>0<>0<><>::
+localization.es.translation::OptimizedTranslation::1497095117351034003::1784059528::0::1::::<><><>0<>0<><>::
+localization.fr.translation::OptimizedTranslation::7284360107541244805::1784059528::0::1::::<><><>0<>0<><>::
+localization.ja.translation::OptimizedTranslation::6253307308014681770::1784059528::0::1::::<><><>0<>0<><>::
+localization.ko.translation::OptimizedTranslation::4222757965853295806::1784059528::0::1::::<><><>0<>0<><>::
+localization.yue.translation::OptimizedTranslation::4103320974522564447::1784059528::0::1::::<><><>0<>0<><>::
+localization.zh.translation::OptimizedTranslation::67681520476624304::1784059528::0::1::::<><><>0<>0<><>::
 ::res://assets/rpg_gui_v1/::1782384867
 gradients.png::CompressedTexture2D::5338628110025032518::1782384866::1782384867::1::::<><><>0<>0<>14c0ffc2b2c22c119e5651533d5d69e4<>res://.godot/imported/gradients.png-b00346ea2db1d8edc8c62c2f6ad91df1.ctex::
 line.png::CompressedTexture2D::1687285472188107811::1782384866::1782384867::1::::<><><>0<>0<>879d7efdf6efa75e42f4df4850c2af5b<>res://.godot/imported/line.png-6791209898f03bc316bf1b7d5913f448.ctex::
@@ -993,9 +993,12 @@ WWT-23.png::CompressedTexture2D::6653117366220905116::1782159566::1782160424::1:
 WWT-24.png::CompressedTexture2D::3017059722257904403::1782159566::1782160424::1::::<><><>0<>0<>7050d8109b0e418c6df5da89c6097194<>res://.godot/imported/WWT-24.png-a0a1eaf512ba90945593a9719398e33c.ctex::
 WWT-25.png::CompressedTexture2D::6569420215013812504::1782159566::1782160424::1::::<><><>0<>0<>267fa99c43b8c57d7003786a462b31f3<>res://.godot/imported/WWT-25.png-6e3b8809f82bc782547b224b44f1e4b9.ctex::
 WWT-26.png::CompressedTexture2D::946085306343335679::1782159566::1782160424::1::::<><><>0<>0<>1f64f86e70e69e2684443af01d634ef9<>res://.godot/imported/WWT-26.png-971d013a5c1331a8ebe29a394eb89359.ctex::
-::res://prefabs/::1783415872
-::res://prefabs/teams/::1783594193
-teams.json::JSON::-1::1783594193::0::1::::<><><>0<>0<><>::
+::res://prefabs/::1784008021
+::res://prefabs/enemys/::1784008084
+enemys.json::JSON::-1::1784008084::0::1::::<><><>0<>0<><>::
+::res://prefabs/teams/::1784008043
+enemys.json::JSON::-1::1784008043::0::1::::<><><>0<>0<><>::
+teams.json::JSON::-1::1783972221::0::1::::<><><>0<>0<><>::
 ::res://prefabs/terrains/::1783560636
 forest_00.tscn::PackedScene::2204117812505601309::1782230637::0::1::::<><><>0<>0<><>::uid://c5fggtsfk75xa::::res://assets/tiles/WWT-07.png
 forest_01.tscn::PackedScene::61662718214330636::1782230650::0::1::::<><><>0<>0<><>::uid://wqigqjsj3avp::::res://assets/tiles/WWT-08.png
@@ -1004,16 +1007,17 @@ grass_00.tscn::PackedScene::7850530937912545108::1782230609::0::1::::<><><>0<>0<
 grass_01.tscn::PackedScene::2911550032349881261::1782230626::0::1::::<><><>0<>0<><>::uid://cedbg617ddc06::::res://assets/tiles/WWT-02.png
 terrains.json::JSON::-1::1783560636::0::1::::<><><>0<>0<><>::
 water_00.tscn::PackedScene::3616723393425412567::1782230682::0::1::::<><><>0<>0<><>::uid://nqj5fdvt56ad::::res://assets/tiles/WWT-26.png
-::res://scenes/::1783594947
-archer.tscn::PackedScene::7089924232122519286::1783626523::0::1::::<><><>0<>0<><>::uid://cxcnme4p4shf8::::res://scripts/saber.gd<>uid://bv0kfcdbfr83i::::res://assets/BUSHI vol.1/Character_animations_no_background.png<>uid://cyp57a6rlv5fd::::res://scenes/unit.tscn
-enemy.tscn::PackedScene::3097112017069432134::1782159566::0::1::::<><><>0<>0<><>::uid://bn6pupd45g3x4::::res://scripts/enemy.gd<>uid://qvxjxh4ihegg::::res://assets/A-full-body-2D-game-character-sprite-using-uploaded-picture,.png
+::res://scenes/::1784059219
+archer.tscn::PackedScene::7566147378431251036::1783627230::0::1::::<><><>0<>0<><>::uid://d0b8n7vxo5ien::::res://scripts/archer.gd<>uid://bv0kfcdbfr83i::::res://assets/BUSHI vol.1/Character_animations_no_background.png<>uid://cyp57a6rlv5fd::::res://scenes/unit.tscn
+enemy.tscn::PackedScene::3097112017069432134::1783974988::0::1::::<><><>0<>0<><>::uid://bn6pupd45g3x4::::res://scripts/enemy.gd<>uid://qvxjxh4ihegg::::res://assets/A-full-body-2D-game-character-sprite-using-uploaded-picture,.png<>uid://cyp57a6rlv5fd::::res://scenes/unit.tscn
 fighter.tscn::PackedScene::1769975245885005269::1783196655::0::1::::<><><>0<>0<><>::uid://creh4n6iuojnd::::res://scripts/fighter.gd<>uid://br362xg16tc2h::::res://assets/CHINESE_GIRL/Character_animations_no_background.png<>uid://cyp57a6rlv5fd::::res://scenes/unit.tscn
-game_menu.tscn::PackedScene::3259847656547014872::1782583502::0::1::::<><><>0<>0<><>::uid://c0rk2u638ury1::::res://Theme&StyleBox/hover_button.tres<>uid://c5erxq7hqpt6t::::res://Theme&StyleBox/normal_button.tres<>uid://dq6vqbtg3kc7m::::res://assets/rpg_gui_v1/paper background.png<>uid://bmamsklp3qxkl::::res://scripts/game_gui.gd<>uid://8jmwtbwo7nfa::::res://assets/fonts/alagard_by_pix3m-d6awiwp.ttf
-game_world.tscn::PackedScene::1161920703578242850::1783521779::0::1::::<><><>0<>0<><>::uid://crqmfvmjk10qv::::res://assets/tiles/WWT-01.png<>uid://cedbg617ddc06::::res://assets/tiles/WWT-02.png<>uid://cmth7tlqu7i5b::::res://assets/tiles/WWT-03.png<>uid://dmx1od25g1fmq::::res://scripts/hex_grid.gd<>uid://bqqgon4f442aq::::res://scripts/hex_tile.gd<>uid://cnap3w3iv55k6::::res://assets/tiles/WWT-04.png<>uid://b2l65q8a3gdh4::::res://assets/tiles/WWT-05.png<>uid://dw1k6i44aj0x6::::res://assets/tiles/WWT-06.png<>uid://c5fggtsfk75xa::::res://assets/tiles/WWT-07.png<>uid://wqigqjsj3avp::::res://assets/tiles/WWT-08.png<>uid://c6hs85g3cl0sq::::res://assets/tiles/WWT-09.png<>uid://bpo0pq1q0f27b::::res://assets/tiles/WWT-10.png<>uid://cbuym3gkbc32a::::res://assets/tiles/WWT-11.png<>uid://dyhvpxrxlip5v::::res://assets/tiles/WWT-12.png<>uid://cf37ho773vwp2::::res://assets/tiles/WWT-13.png<>uid://bxai3ekb6emcv::::res://assets/tiles/WWT-14.png<>uid://cqd2c2wh20qie::::res://assets/tiles/WWT-15.png<>uid://1hkvgty64oul::::res://assets/tiles/WWT-16.png<>uid://1iq2swd8y0kw::::res://assets/tiles/WWT-17.png<>uid://cyoanntk2j1r5::::res://assets/tiles/WWT-18.png<>uid://ceg6p4pycxma4::::res://assets/tiles/WWT-19.png<>uid://chb3m0ywas0um::::res://assets/tiles/WWT-20.png<>uid://c5uttqfeps4db::::res://assets/tiles/WWT-21.png<>uid://desylm4omaicl::::res://assets/tiles/WWT-22.png<>uid://c1124u4mauyoa::::res://assets/tiles/WWT-23.png<>uid://bi8qsd7i1aahf::::res://assets/tiles/WWT-24.png<>uid://c0ujnkfiof2c7::::res://assets/tiles/WWT-25.png<>uid://nqj5fdvt56ad::::res://assets/tiles/WWT-26.png<>uid://bkwlc8ei37nrq::::res://scripts/map_generator.gd<>uid://dj34dk15722nw::::res://prefabs/terrains/grass_00.tscn<>uid://bhqm2lawpmrcv::::res://prefabs/terrains/grass_01.tscn<>uid://6nxq7daetc5b::::res://prefabs/terrains/forest_00.tscn<>uid://d1majqg8u88f1::::res://prefabs/terrains/forest_02.tscn<>uid://44tt2sayusy::::res://prefabs/terrains/forest_01.tscn<>uid://brr752gx2rxc6::::res://prefabs/terrains/water_00.tscn
-hud.tscn::PackedScene::1081086174755829209::1783090795::0::1::::<><><>0<>0<><>::uid://drxxs5yn3bqxq::::res://scripts/hud.gd<>uid://bmpdhkd7v2tmm::::res://scenes/game_menu.tscn
-main.tscn::PackedScene::7527034540228615260::1783626622::0::1::::<><><>0<>0<><>::uid://qs3wt34ncv7o::::res://scenes/game_world.tscn<>uid://7l0506qfhmf::::res://scripts/main.gd<>uid://pnxljbml3cpd::::res://scenes/hud.tscn<>uid://0hnh7fp4yuvl::::res://scenes/fighter.tscn<>uid://c8aoas11l7tfq::::res://scenes/archer.tscn<>uid://ctyda40dhhtda::::res://scripts/camera_controller.gd<>uid://br6sqqwbeat2t::::res://scripts/battle_manager.gd
+game_menu.tscn::PackedScene::3259847656547014872::1784059482::0::1::::<><><>0<>0<><>::uid://c0rk2u638ury1::::res://Theme&StyleBox/hover_button.tres<>uid://c5erxq7hqpt6t::::res://Theme&StyleBox/normal_button.tres<>uid://dq6vqbtg3kc7m::::res://assets/rpg_gui_v1/paper background.png<>uid://bmamsklp3qxkl::::res://scripts/game_gui.gd<>uid://8jmwtbwo7nfa::::res://assets/fonts/alagard_by_pix3m-d6awiwp.ttf<>uid://udpiwem18evb::::res://scenes/save_slot.tscn
+game_world.tscn::PackedScene::1161920703578242850::1783966044::0::1::::<><><>0<>0<><>::uid://crqmfvmjk10qv::::res://assets/tiles/WWT-01.png<>uid://cedbg617ddc06::::res://assets/tiles/WWT-02.png<>uid://cmth7tlqu7i5b::::res://assets/tiles/WWT-03.png<>uid://dmx1od25g1fmq::::res://scripts/hex_grid.gd<>uid://bqqgon4f442aq::::res://scripts/hex_tile.gd<>uid://cnap3w3iv55k6::::res://assets/tiles/WWT-04.png<>uid://b2l65q8a3gdh4::::res://assets/tiles/WWT-05.png<>uid://dw1k6i44aj0x6::::res://assets/tiles/WWT-06.png<>uid://c5fggtsfk75xa::::res://assets/tiles/WWT-07.png<>uid://wqigqjsj3avp::::res://assets/tiles/WWT-08.png<>uid://c6hs85g3cl0sq::::res://assets/tiles/WWT-09.png<>uid://bpo0pq1q0f27b::::res://assets/tiles/WWT-10.png<>uid://cbuym3gkbc32a::::res://assets/tiles/WWT-11.png<>uid://dyhvpxrxlip5v::::res://assets/tiles/WWT-12.png<>uid://cf37ho773vwp2::::res://assets/tiles/WWT-13.png<>uid://bxai3ekb6emcv::::res://assets/tiles/WWT-14.png<>uid://cqd2c2wh20qie::::res://assets/tiles/WWT-15.png<>uid://1hkvgty64oul::::res://assets/tiles/WWT-16.png<>uid://1iq2swd8y0kw::::res://assets/tiles/WWT-17.png<>uid://cyoanntk2j1r5::::res://assets/tiles/WWT-18.png<>uid://ceg6p4pycxma4::::res://assets/tiles/WWT-19.png<>uid://chb3m0ywas0um::::res://assets/tiles/WWT-20.png<>uid://c5uttqfeps4db::::res://assets/tiles/WWT-21.png<>uid://desylm4omaicl::::res://assets/tiles/WWT-22.png<>uid://c1124u4mauyoa::::res://assets/tiles/WWT-23.png<>uid://bi8qsd7i1aahf::::res://assets/tiles/WWT-24.png<>uid://c0ujnkfiof2c7::::res://assets/tiles/WWT-25.png<>uid://nqj5fdvt56ad::::res://assets/tiles/WWT-26.png<>uid://bkwlc8ei37nrq::::res://scripts/map_generator.gd<>uid://dj34dk15722nw::::res://prefabs/terrains/grass_00.tscn<>uid://bhqm2lawpmrcv::::res://prefabs/terrains/grass_01.tscn<>uid://6nxq7daetc5b::::res://prefabs/terrains/forest_00.tscn<>uid://d1majqg8u88f1::::res://prefabs/terrains/forest_02.tscn<>uid://44tt2sayusy::::res://prefabs/terrains/forest_01.tscn<>uid://brr752gx2rxc6::::res://prefabs/terrains/water_00.tscn
+hud.tscn::PackedScene::1081086174755829209::1783972730::0::1::::<><><>0<>0<><>::uid://drxxs5yn3bqxq::::res://scripts/hud.gd<>uid://bmpdhkd7v2tmm::::res://scenes/game_menu.tscn
+main.tscn::PackedScene::7527034540228615260::1784058431::0::1::::<><><>0<>0<><>::uid://qs3wt34ncv7o::::res://scenes/game_world.tscn<>uid://7l0506qfhmf::::res://scripts/main.gd<>uid://pnxljbml3cpd::::res://scenes/hud.tscn<>uid://0hnh7fp4yuvl::::res://scenes/fighter.tscn<>uid://c8aoas11l7tfq::::res://scenes/saber.tscn<>uid://ctyda40dhhtda::::res://scripts/camera_controller.gd<>uid://br6sqqwbeat2t::::res://scripts/battle_manager.gd<>uid://bkei8nxldxqhq::::res://scenes/enemy.tscn
+saber.tscn::PackedScene::7089924232122519286::1783626683::0::1::::<><><>0<>0<><>::uid://dui3qqpd4gfyp::::res://scripts/archer.gd<>uid://bv0kfcdbfr83i::::res://assets/BUSHI vol.1/Character_animations_no_background.png<>uid://cyp57a6rlv5fd::::res://scenes/unit.tscn
 save_slot.tscn::PackedScene::1410896209539756163::1782387334::0::1::::<><><>0<>0<><>::
-unit.tscn::PackedScene::6490217984874725597::1782402324::0::1::::<><><>0<>0<><>::uid://cj8tnybweqfi8::::res://scripts/unit.gd
+unit.tscn::PackedScene::6490217984874725597::1783790544::0::1::::<><><>0<>0<><>::uid://cj8tnybweqfi8::::res://scripts/unit.gd
 ::res://scenes/maps/::1782160423
 map01 - 副本.0.translation::OptimizedTranslation::357356431583266984::1782160423::0::1::::<><><>0<>0<><>::
 map01 - 副本.csv::Translation::7757195619156815278::1782159566::1782160423::1::::<><><>0<>0<>5ddeb87622c54eef7ed5f8aeda557ad6<>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation<*>res://scenes/maps/map01 - 副本.0.translation::
@@ -1021,23 +1025,25 @@ map01.0.translation::OptimizedTranslation::1042137971067694934::1782160423::0::1
 map01.4.translation::OptimizedTranslation::5084829315802316472::1782159566::0::1::::<><><>0<>0<><>::
 map01.csv::Translation::2091555795975395251::1782159566::1782160423::1::::<><><>0<>0<>ed5bb50d60bf579c8385f7b86668082a<>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation<*>res://scenes/maps/map01.0.translation::
 map01.tscn::PackedScene::-1::1782159566::0::1::::<><><>0<>0<><>::res://scripts/map_generator.gd<>res://prefabs/terrains/grass_00.tscn<>res://assets/tiles/WWT-01.png<>res://prefabs/terrains/grass_01.tscn<>res://assets/tiles/WWT-02.png<>res://prefabs/terrains/forest_01.tscn<>res://assets/tiles/WWT-08.png<>res://prefabs/terrains/forest_00.tscn<>res://assets/tiles/WWT-07.png<>res://prefabs/terrains/forest_02.tscn<>res://assets/tiles/WWT-17.png<>res://prefabs/terrains/water_00.tscn<>res://assets/tiles/WWT-26.png
-::res://scripts/::1783626580
-archer.gd::GDScript::8581283458093339379::1783626516::0::1::::Archer<>Unit<><>0<>0<><>::
-battle_manager.gd::GDScript::3644749088897882453::1783626531::0::1::::BattleManager<>Node2D<><>0<>0<><>::
+::res://scripts/::1784059038
+battle_manager.gd::GDScript::3644749088897882453::1784058431::0::1::::BattleManager<>Node2D<><>0<>0<><>::
 camera_controller.gd::GDScript::6156158175527773818::1782159566::0::1::::CameraController<>Camera2D<><>0<>0<><>::
-debug_log.gd::GDScript::555215256735793641::1783200741::0::1::::DebugLog<>RefCounted<><>0<>0<><>::
-enemy.gd::GDScript::3363818625975621771::1782400646::0::1::::<>CharacterBody2D<><>0<>0<><>::
+debug_log.gd::GDScript::555215256735793641::1783972124::0::1::::DebugLog<>RefCounted<><>0<>0<><>::
+enemy.gd::GDScript::3363818625975621771::1783670633::0::1::::Enemy<>Unit<><>0<>0<><>::
 fighter.gd::GDScript::5974786758304858961::1783200839::0::1::::Fighter<>Unit<><>0<>0<><>::
-game_gui.gd::GDScript::3229448098498929947::1783463907::0::1::::<>Control<><>0<>0<><>::
-hex_grid.gd::GDScript::8050612706657541740::1783521779::0::1::::HexGrid<>Node2D<><>0<>0<><>::
-hex_tile.gd::GDScript::3542862256907824788::1783521779::0::1::::HexTile<>Area2D<><>0<>0<><>::
-hex_utils.gd::GDScript::5283297530358869656::1783527934::0::1::::HexUtils<>RefCounted<><>0<>0<><>::
-hud.gd::GDScript::8401383329797092166::1783094761::0::1::::<>CanvasLayer<><>0<>0<><>::
-main.gd::GDScript::66774235648665601::1783418877::0::1::::<>Node<><>0<>0<><>::
-map_generator.gd::GDScript::3134398629022927430::1783558517::0::1::::MapGenerator<>Node2D<><>0<>0<><>::
+game_gui.gd::GDScript::3229448098498929947::1784058431::0::1::::<>Control<><>0<>0<><>::
+hex_grid.gd::GDScript::8050612706657541740::1784058431::0::1::::HexGrid<>Node2D<><>0<>0<><>::
+hex_tile.gd::GDScript::3542862256907824788::1783966044::0::1::::HexTile<>Area2D<><>0<>0<><>::
+hex_utils.gd::GDScript::5283297530358869656::1783966044::0::1::::HexUtils<>RefCounted<><>0<>0<><>::
+hud.gd::GDScript::8401383329797092166::1783972730::0::1::::<>CanvasLayer<><>0<>0<><>::
+main.gd::GDScript::66774235648665601::1784058431::0::1::::<>Node<><>0<>0<><>::
+map_generator.gd::GDScript::3134398629022927430::1783966044::0::1::::MapGenerator<>Node2D<><>0<>0<><>::
+archer.gd::GDScript::8918076110119238821::1783627115::0::1::::Archer<>Unit<><>0<>0<><>::
 saber.gd::GDScript::6392124532615618791::1783416075::0::1::::Saber<>Unit<><>0<>0<><>::
+save_data.gd::GDScript::228817088118513766::1780151602::0::1::::SaveData<>Resource<><>0<>0<><>::
+save_slot.gd::GDScript::901059377091414123::1780151686::0::1::::<>Panel<><>0<>0<><>::
 tile_map_layer.gd::GDScript::3525609407260126292::1782159566::0::1::::<>TileMapLayer<><>0<>0<><>::
-unit.gd::GDScript::5473843527306560133::1783626511::0::1::::Unit<>CharacterBody2D<><>0<>0<><>::
+unit.gd::GDScript::5473843527306560133::1784058431::0::1::::Unit<>CharacterBody2D<><>0<>0<><>::
 utils.gd::GDScript::3309383615783521965::1782159566::0::1::::<>Node<><>0<>0<><>::
 ::res://Theme&StyleBox/::1782387368
 hover_button.tres::StyleBoxFlat::6563313366192162046::1779992422::0::1::::<><><>0<>0<><>::

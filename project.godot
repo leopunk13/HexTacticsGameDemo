@@ -22,6 +22,7 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 
 Utils="*res://scripts/utils.gd"
 HexGrids="*uid://dmx1od25g1fmq"
+SaveManager="*res://scripts/save_manager.gd"
 
 [display]
 

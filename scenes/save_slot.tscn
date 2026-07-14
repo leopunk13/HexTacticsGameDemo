@@ -1,13 +1,14 @@
 [gd_scene format=3 uid="uid://udpiwem18evb"]
 
 [ext_resource type="Texture2D" uid="uid://ybll0cgqnqb0" path="res://assets/rpg_gui_v1/line.png" id="1_608v6"]
-[ext_resource type="Script" uid="uid://cgo6sjrlgfmmr" path="res://scripts/save_slot.gd" id="1_jyl3f"]
+[ext_resource type="Script" uid="uid://m3qk0vvon0r4" path="res://scripts/save_slot.gd" id="1_jyl3f"]
 
 [node name="SaveSlot" type="Panel" unique_id=477110223]
 custom_minimum_size = Vector2(320, 70)
 script = ExtResource("1_jyl3f")
 
 [node name="Line2D" type="Line2D" parent="." unique_id=994287388]
+position = Vector2(4, 0)
 points = PackedVector2Array(0, 0, 320, 0, 320, 72, 0, 72)
 closed = true
 width = 6.0
@@ -28,7 +29,7 @@ offset_right = 8.5
 offset_bottom = 14.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 20
 text = "EMPTY"
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]

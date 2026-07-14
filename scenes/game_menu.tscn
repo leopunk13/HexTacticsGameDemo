@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dq6vqbtg3kc7m" path="res://assets/rpg_gui_v1/paper background.png" id="3_hkba4"]
 [ext_resource type="Script" uid="uid://bmamsklp3qxkl" path="res://scripts/game_gui.gd" id="3_vcs3n"]
 [ext_resource type="FontFile" uid="uid://8jmwtbwo7nfa" path="res://assets/fonts/alagard_by_pix3m-d6awiwp.ttf" id="4_3ccff"]
+[ext_resource type="PackedScene" uid="uid://udpiwem18evb" path="res://scenes/save_slot.tscn" id="6_aru3y"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hkba4"]
 
@@ -73,6 +74,7 @@ horizontal_alignment = 1
 autowrap_mode = 1
 
 [node name="NewContainer" type="VBoxContainer" parent="MainMenu" unique_id=1844528796]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.511
@@ -82,7 +84,7 @@ anchor_bottom = 0.5
 offset_left = -356.794
 offset_top = -36.0
 offset_right = -160.794
-offset_bottom = 93.0
+offset_bottom = 252.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -102,30 +104,136 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "QUIT"
 
+[node name="ContinueContainer" type="VBoxContainer" parent="MainMenu" unique_id=161490029]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.511
+anchor_top = 0.5
+anchor_right = 1.511
+anchor_bottom = 0.5
+offset_left = -356.794
+offset_top = -47.5
+offset_right = -160.794
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="ContinueGameBtn" type="Button" parent="MainMenu/ContinueContainer" unique_id=243971878]
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="NewGameBtn" type="Button" parent="MainMenu/ContinueContainer" unique_id=620410115]
+layout_mode = 2
+text = "NEWGAME"
+
+[node name="SettingsBtn" type="Button" parent="MainMenu/ContinueContainer" unique_id=500165234]
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="QuitBtn" type="Button" parent="MainMenu/ContinueContainer" unique_id=1484668146]
+layout_mode = 2
+text = "QUIT"
+
+[node name="ResumeContainer" type="VBoxContainer" parent="MainMenu" unique_id=223937812]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.511
+anchor_top = 0.5
+anchor_right = 1.511
+anchor_bottom = 0.5
+offset_left = -356.794
+offset_top = -106.0
+offset_right = -160.794
+offset_bottom = 249.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="ResumeGameBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=700721514]
+layout_mode = 2
+text = "RESUME"
+
+[node name="SettingsBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=729911871]
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="MainMenuBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=1558025027]
+layout_mode = 2
+text = "MAINMENU"
+
+[node name="SaveBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=570868485]
+layout_mode = 2
+text = "SAVE"
+
+[node name="LoadBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=2006261246]
+layout_mode = 2
+text = "LOAD"
+
+[node name="RetryBattleBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=2010961125]
+layout_mode = 2
+text = "RETRYBATTLE"
+
+[node name="QuitBtn" type="Button" parent="MainMenu/ResumeContainer" unique_id=1279678642]
+layout_mode = 2
+text = "QUIT"
+
 [node name="SettingsMenu" type="GridContainer" parent="." unique_id=1600829654]
+visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Save&LoadPanel" type="Panel" parent="." unique_id=1395401173]
 clip_contents = true
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+offset_left = 156.35199
+offset_top = -143.0
+offset_right = 504.352
+offset_bottom = 527.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Save&LoadPanel" unique_id=170153453]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -167.5
-offset_top = -143.0
-offset_right = 167.5
-offset_bottom = 143.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="SaveList" type="VBoxContainer" parent="Save&LoadPanel/ScrollContainer" unique_id=1287463711]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="SaveLoadLabel" type="Label" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=295939263]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 36
+text = "SAVE/LOADGAME"
+horizontal_alignment = 1
+
+[node name="SaveSlot1" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=477110223 instance=ExtResource("6_aru3y")]
+layout_mode = 2
+
+[node name="SaveSlot2" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=138615848 instance=ExtResource("6_aru3y")]
+layout_mode = 2
+
+[node name="SaveSlot3" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=105698124 instance=ExtResource("6_aru3y")]
+layout_mode = 2
+
+[node name="SaveSlot4" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=2138476010 instance=ExtResource("6_aru3y")]
+layout_mode = 2
+
+[node name="SaveSlot5" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=1093930111 instance=ExtResource("6_aru3y")]
+layout_mode = 2
+
+[node name="SaveSlot6" parent="Save&LoadPanel/ScrollContainer/SaveList" unique_id=1113287391 instance=ExtResource("6_aru3y")]
 layout_mode = 2

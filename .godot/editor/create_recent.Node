@@ -1,10 +1,10 @@
 Label
+Button
 CanvasLayer
 ColorRect
 CharacterBody2D
 Node2D
 AnimatedSprite2D
-Button
 VBoxContainer
 ScrollContainer
 Panel

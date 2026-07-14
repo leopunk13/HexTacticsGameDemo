@@ -20,3 +20,17 @@ res://scenes/unit.tscn
 res://scripts/debug_log.gd
 res://scenes/hud.tscn
 res://scripts/hud.gd
+res://prefabs/enemys/enemys.json
+res://scenes/game_menu.tscn
+res://assets/languages/localization.csv
+res://assets/languages/localization.en.translation
+res://assets/languages/localization.zh.translation
+res://assets/languages/localization.yue.translation
+res://assets/languages/localization.ko.translation
+res://assets/languages/localization.ja.translation
+res://assets/languages/localization.es.translation
+res://assets/languages/localization.fr.translation
+res://scenes/save_slot.tscn
+res://scripts/save_data.gd
+res://scripts/save_slot.gd
+res://scripts/save_manager.gd

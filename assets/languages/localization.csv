@@ -7,3 +7,10 @@ GAME,Game,游戏,遊戲,게임,ゲーム,ゲーム,jeu
 LANGUAGE,Language,语言,語言,언어,言語,lenguaje,langue
 SAVE,Save,保存,儲存,보관하다,保存,guardar,sauvegarder
 CANCEL,Cancel,取消,取消,취소,キャンセル,cancelar,annuler
+CONTINUE,Continue,继续,繼續,계속하기,続行,continuar,continuer
+LOAD,Load,加载,載入,로드,読み込み,cargar,charger
+MAINMENU,Main Menu,主菜单,主選單,메인 메뉴,メインメニュー,menú principal,menu principal
+RESUME,Resume,恢复,恢復,회복,回復,resumir,reprendre
+RETRYBATTLE,Retry Battle,重试战斗,重試戰鬥,전투 재시도,再び戦闘を試みる,reintentar la batalla,recommencer la bataille
+SAVE/LOADGAME,Save/Load Game,保存/加载,儲存/載入,보관하다/로드,保存/読み込み,guardar/cargar,sauvegarder/charger
+EMPTY,Empty,空存档,空存檔,공항 아카이브,空アーカイブ,vacío,vide

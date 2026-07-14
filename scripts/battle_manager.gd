@@ -66,10 +66,14 @@ var _enemy_ai_queue: Array[Unit] = []
 ## 当前正在行动的敌方单位
 var _current_enemy: Unit = null
 
+## 当前回合数
+var turn_count: int = 1
+
 ## 初始化战斗
 func setup_battle(cam: CameraController, hud_node: CanvasLayer) -> void:
 	camera = cam
 	hud = hud_node
+	turn_count = 1
 	# 连接 Autoload HexGrids 的 tile_clicked 信号
 	if not HexGrids.tile_clicked.is_connected(_on_hex_tile_tile_clicked):
 		HexGrids.tile_clicked.connect(_on_hex_tile_tile_clicked)
@@ -794,6 +798,7 @@ func start_enemy_turn() -> void:
 	for enemy in enemy_units:
 		if not enemy.is_dead:
 			_enemy_ai_queue.append(enemy)
+	turn_changed.emit(turn_count, "ENEMY")
 	_set_state(BattleState.ENEMY_TURN)
 	# 开始处理队列中的下一个单位
 	_process_next_enemy()
@@ -812,6 +817,9 @@ func _process_next_enemy() -> void:
 		# 所有敌方单位行动完毕，重置玩家单位状态并切回玩家回合
 		_current_enemy = null
 		_reset_player_units_for_new_turn()
+		# 回合数+1（敌方回合结束后进入新的玩家回合）
+		turn_count += 1
+		turn_changed.emit(turn_count, "PLAYER")
 		_set_state(BattleState.SELECT_UNIT)
 		return
 
@@ -938,3 +946,110 @@ func _reset_player_units_for_new_turn() -> void:
 			player.has_moved = false
 			player.has_attacked = false
 			player.is_turn_ended = false
+
+
+## ==================== 存档/读档/重试 ====================
+
+## 获取当前战斗状态用于存档
+func get_current_state() -> Dictionary:
+	var current_team: String = "PLAYER"
+	if state == BattleState.ENEMY_TURN:
+		current_team = "ENEMY"
+	return {
+		"turn_count": turn_count,
+		"current_team": current_team,
+		"player_units": player_units,
+		"enemy_units": enemy_units,
+	}
+
+## 从存档数据恢复战斗状态
+func restore_from_save_data(save_data: SaveData) -> void:
+	# 清除当前状态
+	HexGrids.clear_highlights()
+	_clear_facing_indicator()
+	# 清除所有地块上的单位占据
+	for unit in player_units + enemy_units:
+		if unit != null and is_instance_valid(unit):
+			var tile: HexTile = HexGrids.get_tile(unit.grid_coord)
+			if tile and tile.occupying_unit == unit:
+				tile.occupying_unit = null
+	# 恢复回合数和队伍
+	turn_count = save_data.turn_count
+	# 重新注册单位列表（恢复死亡单位到列表中）
+	player_units.clear()
+	enemy_units.clear()
+	# 恢复友方单位
+	_restore_units(save_data.player_units_data, Unit.Team.PLAYER, player_units)
+	# 恢复敌方单位
+	_restore_units(save_data.enemy_units_data, Unit.Team.ENEMY, enemy_units)
+	# 重新注册地块占据
+	for unit in player_units + enemy_units:
+		if not unit.is_dead:
+			var tile: HexTile = HexGrids.get_tile(unit.grid_coord)
+			if tile:
+				tile.occupying_unit = unit
+	# 设置状态
+	var target_state: int = BattleState.SELECT_UNIT
+	if save_data.current_team == "ENEMY":
+		# 若存档时在敌方回合，恢复后直接进入玩家回合（简化处理）
+		target_state = BattleState.SELECT_UNIT
+	selected_unit = null
+	_set_state(target_state)
+	turn_changed.emit(turn_count, "PLAYER")
+	# 仅在 hud 存在 update_turn 方法时调用（该方法可能未实现）
+	if hud and hud.has_method("update_turn"):
+		hud.update_turn(turn_count, "PLAYER")
+
+## 从存档数据恢复单位列表
+func _restore_units(units_data: Array, team: Unit.Team, target_list: Array) -> void:
+	# 从场景中收集所有对应队伍的单位节点
+	var group_name: String = "player" if team == Unit.Team.PLAYER else "enemy"
+	var scene_units: Array[Node] = get_tree().get_nodes_in_group(group_name)
+	# 按父节点名称（Fighter/Saber/Enemy1 等）建立映射，用于存档匹配
+	var name_to_unit: Dictionary = {}
+	for node in scene_units:
+		if node is Unit and node.get_parent() is Unit:
+			name_to_unit[node.get_parent().name] = node
+	# 根据存档数据恢复每个单位
+	for unit_dict in units_data:
+		var unit_name: String = unit_dict.get("unit_name", "")
+		var unit: Unit = name_to_unit.get(unit_name, null)
+		if unit == null or not is_instance_valid(unit):
+			continue
+		# 恢复属性
+		unit.grid_coord = Vector2i(unit_dict.get("grid_x", 0), unit_dict.get("grid_y", 0))
+		unit.health = unit_dict.get("health", unit.max_health)
+		unit.max_health = unit_dict.get("max_health", 100.0)
+		unit.mana = unit_dict.get("mana", unit.max_mana)
+		unit.max_mana = unit_dict.get("max_mana", 50.0)
+		unit.has_moved = unit_dict.get("has_moved", false)
+		unit.has_attacked = unit_dict.get("has_attacked", false)
+		unit.is_turn_ended = unit_dict.get("is_turn_ended", false)
+		unit.facing_direction = Vector2(unit_dict.get("facing_x", 1.0), unit_dict.get("facing_y", 0.0))
+		unit.is_dead = unit_dict.get("is_dead", false)
+		# 同步世界位置
+		var tile_center: Vector2 = HexUtils.axial_to_pixel(unit.grid_coord.x, unit.grid_coord.y)
+		tile_center.y -= 25.0
+		var parent_node: Node2D = unit.get_parent() as Node2D
+		if parent_node:
+			parent_node.global_position = tile_center
+			parent_node.visible = not unit.is_dead
+		# 恢复血条/法力条显示
+		if unit.health_bar:
+			unit.health_bar.max_value = unit.max_health
+			unit.health_bar.value = unit.health
+		if unit.mana_bar:
+			unit.mana_bar.max_value = unit.max_mana
+			unit.mana_bar.value = unit.mana
+		# 恢复动画状态
+		if unit.is_dead:
+			if unit.animated_sprite and unit.animated_sprite.sprite_frames and unit.animated_sprite.sprite_frames.has_animation("death"):
+				unit.animated_sprite.stop()
+		else:
+			if unit.animated_sprite and unit.animated_sprite.sprite_frames and unit.animated_sprite.sprite_frames.has_animation("idle"):
+				unit.animated_sprite.play("idle")
+		# 添加到列表
+		target_list.append(unit)
+		# 重新连接死亡信号
+		if not unit.unit_died.is_connected(_on_unit_unit_died):
+			unit.unit_died.connect(_on_unit_unit_died)
